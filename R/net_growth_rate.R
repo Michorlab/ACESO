@@ -14,6 +14,9 @@ net_growth_rate=function(Inputdata,death_rate=NULL,birth_rate=NULL,time0_data=T)
   Viable.cells<-NULL
   Cell_Count_0<-NULL
   Time<-NULL
+  CONC<-NULL
+  Type<-NULL
+  "."<-"callate"
 
   #For multiple cell lines:
   for(l in unique(Inputdata$Cell.line)){

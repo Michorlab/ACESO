@@ -20,8 +20,8 @@ resLoewe <- function(a, b, EmaxA, EmaxB, E0A, E0B, nA, nB, EC50A, EC50B){
 }
 #' Compute the predicted effect under Loewe model
 #'
-#' @param a dose of drug 1
-#' @param b dose of drug 2
+#' @param d1 dose of drug 1
+#' @param d2 dose of drug 2
 #' @param model hill model for drug 1 and drug 2
 #' @param same.Emax logical value to indicate whether the hill model for drug 1 and drug 2 share the same Emax value (classical Loewe model)
 #'
@@ -81,6 +81,7 @@ try.loewe.separate.models <- function(d1, d2, mod1, mod2){
 #' @examples NULL
 Loewe<-function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',same.Emax=F,Emax.effect=c('min','max')){
   
+  variable<-NULL
   data$loewe_additivity=NULL
   GD=data[,c('Cell.line',conc1,conc2,'Type',resp)]
   GD=unique(GD)
@@ -101,13 +102,13 @@ Loewe<-function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',same.Emax=F,Em
   formu=paste0(resp,'~value')
   if(!same.Emax){
     #same E0
-    combi <- drc::drm(formu,variable, data=Marginal.data, fct = LL.4(),
+    combi <- drc::drm(formu,variable, data=Marginal.data, fct = drc::LL.4(),
                       pmodels=list(~variable-1, ~variable-1, ~1, ~variable-1))
     drug1.model$coefficients=coef(combi)[c(1,3,5,6)]
     drug2.model$coefficients=coef(combi)[c(2,4,5,7)]
   }else{
     #same E0 y Emax
-    combi <- drc::drm(formu,variable, data=Marginal.data, fct = LL.4(),
+    combi <- drc::drm(formu,variable, data=Marginal.data, fct = drc::LL.4(),
                       pmodels=list(~variable-1, ~1, ~1, ~variable-1))
     drug1.model$coefficients=coef(combi)[c(1,3,4,5)]
     drug2.model$coefficients=coef(combi)[c(2,3,4,6)]

@@ -7,6 +7,8 @@
 #' @param type_0 Type-0 S4 object
 #' @param type_i Type-i S4 object
 #' @param N number of resistant cell clones
+#' @param approximation logical argument indicating if an approximation of the numerical integration method must be used or not. Default to TRUE for faster computation.
+#' @param int.function integration function. Possible options are "integrate" or "pracma". The default option is integrate function in R. If "pracma" is selected, the numerical integration methods from pracma package are used (more robust but slower option).
 #' @return returns the probability that there exists at least one resistant cell of any type at time T after treatment iniciation
 #' @export
 #' @examples
@@ -25,6 +27,25 @@
 #'  Prob_resistance(t=100,type_0=Type0,type_i=Type_i,N=1)
 #'  }
 #'
+
+Prob_resistance <- function(t,type_0,type_i,N,approximation=T,int.function=c("integrate","pracma")){
+  int.function <- match.arg(int.function)
+  if(approximation){
+    if(int.function=="integrate"){
+      Prob_res<-Prob_resistance.aprox(t,type_0,type_i,N)
+    }else if(int.function=="pracma"){
+      Prob_res<-Prob_resistance.pracma_aprox(t,type_0,type_i,N)
+    }
+  }else{
+    if(int.function=="integrate"){
+      Prob_res<-Prob_resistance.integrate(t,type_0,type_i,N)
+    }else if(int.function=="pracma"){
+      Prob_res<-Prob_resistance.pracma(t,type_0,type_i,N)
+    }
+    
+  }
+  return(Prob_res)
+}
 Prob_resistance.pracma_aprox<-function(t,type_0,type_i,N){
 
   int_f0<- approxfun(seq(0,t+1,0.5), sapply(seq(0,t+1,0.5),function(x) pracma::integral(f0,xmin=0,xmax=x,b0=type_0@b0,d0=type_0@d0)))
@@ -79,7 +100,7 @@ Prob_resistance.pracma<-function(t,type_0,type_i,N){
 }
 
 
-Prob_resistance<-function(t,type_0,type_i,N){
+Prob_resistance.integrate<-function(t,type_0,type_i,N){
 
   PrIntegral <- Vectorize(function(t,Text,type_0,type_i,N) {
     #ui<-sapply(1:length(type_i),function(x)(type_i[[x]]@ui))

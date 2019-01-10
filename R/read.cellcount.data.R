@@ -3,7 +3,8 @@
 NULL
 
 check_controls=function(dtdata,combination=F){
-
+  Control<-Viable.cells<-CONC<-Cell.line<-Type<-Time<-Replicate<-CONC2<-NULL
+  . <- "callate"
   # Is there a replicate column?
   if(!any(colnames(dtdata)=="Replicate")) dtdata$Replicate=1
   # Is there a cell Type column?
@@ -56,7 +57,8 @@ check_controls=function(dtdata,combination=F){
 #' @return A dataframe with the relevant information about the cell viability assay.
 #' @export
 read.cellcount.data=function(filename,combination=F){
-
+  Cell_Count_0<-Viable.cells<-Time<-Cell.line<-Type<-Replicate<-NULL
+  . <- "callate"
   dataset=read.csv(filename,header=T,na='.')
   if(length(setdiff(c('CONC', 'Viable.cells','Time'),colnames(dataset)))>0){
     missing=setdiff(c('CONC', 'Viable.cells','Time'),colnames(dataset))

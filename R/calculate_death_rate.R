@@ -10,7 +10,9 @@
 #' @return A dataframe with the relevant information about the cell viability assay.
 #' @export
 read.celldeath.file=function(filename,combination=F,column.name="Apoptotic.fraction"){
+  Apoptosis_time0<-Apoptotic.fraction<-Time<-Cell.line<-Type<-Replicate<-NULL
   cell_death_data=read.csv(filename,header = T, na='.')
+  "."<-"callate"
   #Apoptotic.fraction: Annexin.Vplus: sum of early and late apoptotic cells (V+/Pi- + V+/Pi+)
   if(length(setdiff(c('CONC', column.name,'Time'),colnames(cell_death_data)))>0){
     missing=setdiff(c('CONC', column.name,'Time'),colnames(cell_death_data))
@@ -59,10 +61,12 @@ read.celldeath.file=function(filename,combination=F,column.name="Apoptotic.fract
 #' @param d_start initial parameter value for the death rate to be used in the least squared estimation process.
 #' @param column.name string value to specify the column name where the total number or the fraction of death cells numbers are saved.
 #' @param Apoptotic.fraction if TRUE, the fraction of death cells is used for the calculation of the death rate. If FALSE, the total number of death cells is used.
+#' @param ... Additional arguments for nls function
 #' @return A dataframe where the death rate for each cell type is included as a column to the information used as input.
 #' @export
 calculate_death_rate=function(cell_death_data,net_growth_data=NULL,d_start=0.005,Apoptotic.fraction=T,column.name="Apoptotic.fraction",...){
-
+  . <- "callate"
+  Birth_rate<- Death_rate<-Cell.line<-Type <-NULL
   if(!is.null(net_growth_data)) cell_death_data=merge(cell_death_data,net_growth_data)
   data=data.table::as.data.table(cell_death_data)
   data$Death_rate=NULL

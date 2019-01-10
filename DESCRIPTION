@@ -2,16 +2,27 @@ Package: ACESO
 Title: A Cancer Evolution Simulation Optimizer
 Version: 0.0.0.9000
 Authors@R: c(person("Itziar", "Irurzun-Arana", email = "itzirurzun@gmail.com", role = c("aut", "cre")))
-Description: ACESO is a multiscale computational framework to explore the evolutionary dynamics of heterogeneous tumor cell populations taking pharmacokinetic and drug interaction effects into account to rationally identify optimum single-agent and combination treatment administration strategies for oncogene-driven cancers.
-Depends: R (>= 3.4.3)
+Description: ACESO is a multiscale computational framework to explore
+    the evolutionary dynamics of heterogeneous tumor cell populations taking
+    pharmacokinetic and drug interaction effects into account to rationally identify
+    optimum single-agent and combination treatment administration strategies for
+    oncogene-driven cancers.
+Depends:
+    R (>= 3.4.3)
 License: GPL (>= 2)
 Encoding: UTF-8
-Imports: drc,
+Imports:
+    drc,
     mrgsolve,
     mgcv,
     data.table,
     gridExtra,
+    pracma,
     ggplot2,
+    braidReports,
+    methods,
+    minpack.lm,
     stats,
     utils
 LazyData: true
+RoxygenNote: 5.0.1

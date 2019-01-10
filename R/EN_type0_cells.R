@@ -1,4 +1,4 @@
-#' @import pracma
+#' @importFrom pracma integral
 NULL
 
 #' EN_type0_cells
@@ -6,6 +6,7 @@ NULL
 #' Expected number of sensitive type 0 cells at time t after treatment initiation
 #'
 #' @param t Final time
+#' @param T0 Initial time. Default 0.
 #' @param type_0 Type-0 S4 object
 #' @param ui vector containing the mutation probabilities of the resistant cell clones. Default is 0 (single-type birth-death process, no resistant clones).
 #' @param int.function integration function. Possible options are "integrate" or "pracma". The default option is integrate function in R. If "pracma" is selected, the numerical integration methods from pracma package are used (more robust but slower option).

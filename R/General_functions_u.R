@@ -67,6 +67,7 @@ fi_cr<-Vectorize(function(s,bi_cr,di_cr){bi_cr-di_cr},"s")
 #' @param birth_rate birth rate function. It can be a numeric value, a user created function or the result of a model fitting function.
 #' @param death_rate death rate function. It can be a numeric value, a user created function or the result of a model fitting function.
 #' @param scale scaling parameter. Numeric value.
+#' @param pk.function the name of the function(s) which computes the pharmacokinetic profile of the drug(s) that affects type 0 cells.
 #' @return a S4 object with all the above information gathered together.
 #' @export
 #' @examples
@@ -123,7 +124,7 @@ define.Type0.cells=function(N0,birth_rate,death_rate,scale=1,pk.function='pk'){
 
   #Define Type-0 cell type:
 
-  new("Type-0", N0 = N0, b0=b0, d0 = d0)
+  methods::new("Type-0", N0 = N0, b0=b0, d0 = d0)
 }
 
 #' define.Typei.cells
@@ -132,8 +133,9 @@ define.Type0.cells=function(N0,birth_rate,death_rate,scale=1,pk.function='pk'){
 #' @param Ni cell population at time 0.
 #' @param birth_rate birth rate function. It can be a numeric value, a user created function or the result of a model fitting function.
 #' @param death_rate death rate function. It can be a numeric value, a user created function  or the result of a model fitting function.
-#' @param mutation.rate numeric value or function for the mutation rate.
+#' @param mutation_rate numeric value or function for the mutation rate.
 #' @param scale scaling parameter. Numeric value.
+#' @param pk.function the name of the function which computes the pharmacokinetic profile of the drug that affects type i cells.
 #' @return a S4 object with all the above information gathered together.
 #' @export
 #' @examples
@@ -202,7 +204,7 @@ define.Typei.cells=function(Ni=0,birth_rate,death_rate,mutation_rate,scale=1,pk.
 }
 
   #Define Type-i cell type:
-  new("Type-i", Ni = Ni, bi=bi, di = di,ui=ui)
+  methods::new("Type-i", Ni = Ni, bi=bi, di = di,ui=ui)
 }
 
 #' define.Typeicr.cells
@@ -211,8 +213,9 @@ define.Typei.cells=function(Ni=0,birth_rate,death_rate,mutation_rate,scale=1,pk.
 #' @param Ni_0 cell population at time 0.
 #' @param birth_rate numeric value for the birth rate of cross-resistant cells.
 #' @param death_rate numeric value for the death rate of cross-resistant cells.
-#' @param mutation.rate numeric value for mutation rate.
+#' @param mutation_rate numeric value for mutation rate.
 #' @param scale scaling parameter. Numeric value.
+#' @param mother_cell number corresponding to the mother cell type from which type icr cell has emerged.
 #' @return a S4 object with all the above information gathered together.
 #' @export
 #' @examples
@@ -228,7 +231,7 @@ define.Typeicr.cells=function(Ni_0=0,birth_rate,death_rate,mutation_rate,mother_
   if(!is.numeric(death_rate)){
     stop('death_rate should have a numeric value')
   }
-
+  
   #Define Type-icr cell type:
-  new("Type-icr", Ni_cr = Ni_0, bi_cr=birth_rate, di_cr = death_rate,ui_cr=mutation_rate,mother_cell=mother_cell)
-  }
+  methods::new("Type-icr", Ni_cr = Ni_0, bi_cr=birth_rate, di_cr = death_rate,ui_cr=mutation_rate,mother_cell=mother_cell)
+}

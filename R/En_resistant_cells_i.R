@@ -1,6 +1,4 @@
 
-fi<-Vectorize(function(s,bi,di){bi(s)-di(s)},"s")
-
 #' En_resistant_cells_i
 #'
 #' Expected number of resistant cells in clone i at time t after treatment initiation
@@ -10,6 +8,7 @@ fi<-Vectorize(function(s,bi,di){bi(s)-di(s)},"s")
 #' @param type_i list with Type-i S4 object
 #' @param  i number of cell type
 #' @param type_icr Type-icr S4 object for the i cell type
+#' @param approximation logical argument indicating if an approximation of the numerical integration method must be used or not. Default to TRUE for faster computation.
 #' @return En_resistant_cells returns the number of resistant cells in clone i at time t after treatment initiation
 #' @export
 #' @examples
@@ -26,9 +25,21 @@ fi<-Vectorize(function(s,bi,di){bi(s)-di(s)},"s")
 #'#Group the different type i resistant cells
 #'type_i<-list(Type1)
 #'#  #Call En_resistant_cells_i function
-#'ni_t<-En_resistant_cells_i(t=100,type_0=Type0,type_i=type_i,i=1)
+#'ni_t<-En_resistant_cells_i(t=100,type_0=Type0,type_i=type_i,i=1,approximation=F)
 #' }
-En_resistant_cells_i<-function(t,type_0,type_i,i,type_icr=NULL){
+En_resistant_cells_i<-function(t,type_0,type_i,i,type_icr=NULL,approximation=T){
+  int.function <- match.arg(int.function)
+  if(approximation){
+      En_res<-En_resistant_cells_i.aprox(t,type_0,type_i,i,type_icr)
+  }else{
+      En_res<-En_resistant_cells_i.integrate(t,type_0,type_i,i,type_icr)
+  }
+  return(En_res)
+}
+
+fi<-Vectorize(function(s,bi,di){bi(s)-di(s)},"s")
+
+En_resistant_cells_i.integrate<-function(t,type_0,type_i,i,type_icr=NULL){
 
   if(is.null(type_icr)) ui_cr=0
   else{ui_cr=type_icr@ui_cr}
@@ -46,7 +57,7 @@ En_resistant_cells_i<-function(t,type_0,type_i,i,type_icr=NULL){
   return(ni)
 }
 
-#' @export
+
 En_resistant_cells_i.pracma<-function(t,type_0,type_i,i){
 
   InnerIntegral = function(y,bi,di,ui,type_0,i){
@@ -62,33 +73,6 @@ En_resistant_cells_i.pracma<-function(t,type_0,type_i,i){
   return(ni)
 }
 
-#' En_resistant_cells_i.aprox
-#'
-#' Expected number of resistant cells in clone i at time t after treatment initiation using an approximation of the numerical integration method for faster computation of complex integrals
-#'
-#' @param t Final time
-#' @param type_0 Type-0 S4 object
-#' @param type_i list with Type-i S4 object
-#' @param  i number of cell type
-#' @param type_icr Type-icr S4 object for the i cell type
-#' @return En_resistant_cells_i.aprox returns the number of resistant cells in clone i at time t after treatment initiation
-#' @export
-#' @examples
-#' \dontrun{
-#' #Birth rate of type 0 cells as a function of time:
-#'b0=function(time){0.05*sin(0.1*time)+0.1}
-#'#Create Type-0 S4 object structure with the parameters of type 0 sensitive cells
-#'Type0 <-define.Type0.cells(N0=100,birth_rate = b0,death_rate= 0.14)
-
-#'#Birth rate of type 1 cells as a function of time:
-#'b1=function(time){0.05*sin(0.1*time)+0.12}
-#'#Create Type-i S4 object structure with the parameters of type i resistant cells
-#'Type1 <- define.Typei.cells(Ni=0,birth_rate = b1,death_rate  = 0.09,mutation_rate=10^-3)
-#'#Group the different type i resistant cells
-#'type_i<-list(Type1)
-#'#  #Call En_resistant_cells_i function
-#'ni_t<-En_resistant_cells_i.aprox(t=100,type_0=Type0,type_i=type_i,i=1)
-#' }
 En_resistant_cells_i.aprox<-function(t,type_0,type_i,i,type_icr=NULL){
   if(t==0) return(type_i[[i]]@Ni)
   if(is.null(type_icr)) ui_cr=0

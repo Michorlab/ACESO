@@ -1,5 +1,7 @@
 #' @import mgcv
 NULL
+#' @importFrom braidReports responseMap
+NULL
 
 #### RESPONSE SURFACE FIT ####
 #' resp.surface.fit
@@ -50,12 +52,17 @@ resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Drug
 #' @param conc2 Name of the column with the concentration values for drug 2.
 #' @param Drug1.name string to specify the name of drug 1.
 #' @param Drug2.name string to specify the name of drug 2.
+#' @param logscale determines whether the input variables will be plotted on a logarithmic scale, or a standard linear scale. Because this function is intended primarily for visualizing combined action dose-response, a logarithmic dose-pair space is the default.
 #' @param method array to specify if a generalized additive model (gam) or  a polynomial surface (loess) model must be fitted to the data.
 #' @param title title for the drug.
 #' @return This function returns a fitted gam object (see ?gamObject for a detailed description) or an object of class "loess".
 #' @export
 Multiple.resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Drug1.name='Drug 1',Drug2.name='Drug 2',logscale=T,method=c('gam','loess'),title=""){
-
+ Cell.line<-NULL
+ Type<-NULL
+ CONC<-NULL
+ rmap<-NULL
+ 
   method <- match.arg(method)
 
   if(!(any(colnames(data)=="Type"))){
@@ -74,7 +81,7 @@ Multiple.resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CO
     datacl=subset(data,Cell.line==i)
     for(j in unique(datacl$Type)){
       datacltype=subset(datacl,Type==j)
-      fit=resp.surface.fit(data=datacltype,resp=resp,conc1=conc1,conc2=conc2,Drug1.name=Drug1.name,Drug2.name=Drug2.name,logscale=logscale,method=method)
+      fit=resp.surface.fit(data=datacltype,resp=resp,conc1=conc1,conc2=conc2,Drug1.name=Drug1.name,Drug2.name=Drug2.name,method=method)
       fit$Type=j
       fit$Cell.line=i
       fit.result[[l+1]]=fit
@@ -84,8 +91,8 @@ Multiple.resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CO
       CONC=GD[,conc1]
       CONC2=GD[,conc2]
       GD$predict=predict(fit, newdata =data.frame(CONC=CONC,CONC2=CONC2))
-      rmap <<- responseMap(predict~CONC+CONC2,GD,logscale=logscale)
-      p=plot.ResponseSurface(rmap=rmap,xl=Drug1.name,yl=Drug2.name,zl=resp)
+      rmap <<- braidReports::responseMap(predict~CONC+CONC2,GD,logscale=logscale)
+      p=ResponseSurface.plot(rmap=rmap,xl=Drug1.name,yl=Drug2.name,zl=resp)
 
       plot_fit[[l+1]]<-p+ ggplot2::ggtitle(paste(i,':', 'Type',j,title))+theme_minimal()
       l=l+1

@@ -1,9 +1,21 @@
 #' @import ggplot2
 NULL
 
-#Response surface plot
+#' ResponseSurface.plot
+#'
+#' 
+#'
+#' @param rmap a ggplot2 plot object depicting a response map, produced by the function responseMap.
+#' @param palette a character vector or two or more colors defining the colorscale to be applied to the fill variable in the plot.
+#' @param cscale a value around which the colorscale applied to the fill variable will be centered. If NULL (the default), the colorscale will range from the minimum fill variable to the maximum.
+#' @param xl The character string or expression used to label the x-axis
+#' @param yl The character string or expression used to label the y-axis
+#' @param zl The character string or expression used to label the colorscale representing the response variable. "Effect" by default.
+#' @param title title for the plot
+#' @return A ggplot2 plot object, with the appropriate scales and labels added.
+#' @seealso braidReports::responseMap
 #' @export
-plot.ResponseSurface <- function(rmap,palette=NULL,cscale=NULL,xl=expression(CONC),yl=expression(CONC2),zl="Effect",title="") {
+ResponseSurface.plot <- function(rmap,palette=NULL,cscale=NULL,xl=expression(CONC),yl=expression(CONC2),zl="Effect",title="") {
   fp <- rmap+labs(x=xl,y=yl)+ stat_contour(aes(z = rmap$data$z),colour="black", alpha=.2) +ggtitle(paste(title))
   if (is.null(palette)) { palette=c("magenta","yellow","darkturquoise") }
   if (!is.null(cscale)) {
@@ -24,9 +36,24 @@ plot.ResponseSurface <- function(rmap,palette=NULL,cscale=NULL,xl=expression(CON
   return(fp)
 }
 
+#' DifferenceSurface.plot
+#'
+#' 
+#'
+#' @param rmap a ggplot2 plot object depicting a response map, produced by the function responseMap.
+#' @param zcenter the value that forms the centerpoint (white) in the bidirectional color scale. If NULL (the default), the default setting for scale_fill_gradient2 is used.
+#' @param xl The character string or expression used to label the x-axis
+#' @param yl The character string or expression used to label the y-axis
+#' @param zl The character string or expression used to label the colorscale representing the response variable. "Effect" by default.
+#' @param low character corresponding to the color selected for the lowest values in the response map.
+#' @param mid color for the mid point.
+#' @param high character corresponding to the color selected for the highest values in the response map.
+#' @param title title for the plot
+#' @return A ggplot2 plot object, with the appropriate scales and labels added.
+#' @seealso braidReports::responseMap
 #' @export
-plot.DifferenceSurface <- function(rmap,zcenter=NULL,xl=expression(CONC),yl=expression(CONC2),zl="Effect",low="#e9a3c9",mid="#f7f7f7",high="#4dac26") {
-  fp <- rmap+labs(x=xl,y=yl)
+DifferenceSurface.plot <- function(rmap,zcenter=NULL,xl=expression(CONC),yl=expression(CONC2),zl="Effect",low="#e9a3c9",mid="#f7f7f7",high="#4dac26",title="") {
+  fp <- rmap+labs(x=xl,y=yl)+ggtitle(paste(title))
   if (!is.null(zcenter)) { fp <- fp+scale_fill_gradient2(zl,midpoint=zcenter,mid = mid,low=low,high=high) }
   #if (is.null(palette)) { palette=c("magenta","yellow","darkturquoise") }
   else { fp <- fp+scale_fill_gradient2(zl,mid = mid,low=low,high=high) }

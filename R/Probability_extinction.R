@@ -44,7 +44,7 @@ Pext.pracma <- function(t,Text,type_i,i){
 Pext.pracma.aprox <- function(t,Text,type_i,i){
 
   wi <- Vectorize(function(n,time,bi,di){di(n+time)-bi(n+time)},"n")
-  int_wi<- approxfun(seq(0,Text,1), sapply(seq(0,Text,1),function(x) pracma::integral(wi,xmin=0,xmax=x,time=t,bi=Type1@bi,di=Type1@di)))
+  int_wi<- approxfun(seq(0,Text,1), sapply(seq(0,Text,1),function(x) pracma::integral(wi,xmin=0,xmax=x,time=t,bi=type_i[[i]]@bi,di=type_i[[i]]@di)))
 
   InnerIntegralVec <- Vectorize(function(tau,t,bi,di){
     di(tau+t)*exp(int_wi(tau))
@@ -68,7 +68,7 @@ Pext.integrate <- function(t,Text,type_i,i){
 
 Pext.aprox <- function(t,Text,type_i,i){
   wi <- Vectorize(function(n,time,bi,di){di(n+time)-bi(n+time)},"n")
-  int_wi<- approxfun(seq(0,Text,1), sapply(seq(0,Text,1),function(x) integrate(wi,lower=0,upper=x,time=t,bi=Type1@bi,di=Type1@di,subdivisions = 400L,stop.on.error = F)$value))
+  int_wi<- approxfun(seq(0,Text,1), sapply(seq(0,Text,1),function(x) integrate(wi,lower=0,upper=x,time=t,bi=type_i[[i]]@bi,di=type_i[[i]]@di,subdivisions = 400L,stop.on.error = F)$value))
 
   InnerIntegralVec <- Vectorize(function(tau,t,bi,di){
     di(tau+t)*exp(int_wi(tau))

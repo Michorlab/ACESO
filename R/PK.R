@@ -1,14 +1,23 @@
 
 #' @import data.table
 NULL
+#' @import methods
+NULL
 #' @import stats
 NULL
 #' @import utils
 NULL
 #' @import mrgsolve
 NULL
+#' @importFrom minpack.lm nlsLM
+NULL
 
-
+#' read.PKdata
+#'
+#' Read the pharmacokinetic data
+#'
+#' @param file name of the file where to drug concentrations over time are stored.
+#' @return A data.frame with the pharmacokinetic data 
 #' @export
 read.PKdata=function(file){
   PKdata=read.csv(file,header = T)
@@ -20,9 +29,67 @@ read.PKdata=function(file){
   return(PKdata)
 }
 
+#' pk.function
+#'
+#' Makes an interpolation of Pharmacokinetic (PK) data or a simulated PK model over time
+#'
+#' @param model Structural PK model definition (mrgsolve model specification)
+#' @param dosing_schedule Dosing schedule to simulate the PK model
+#' @param parameters Estimates of the pharmacokinetic parameters of the model.
+#' @param variability variability terms for the specified PK parameters.
+#' @param tend Final time for the simulation of the PK model.
+#' @param delta a number indicating the increment of a time sequence to simulate from 0 to tend. A small value is needed for a proper interpolation. Default: 0.00005.
+#' @param pk.function user defined pk function to interpolate instead of interpolating the simulation results of a specified PK model
+#' @param missing_times numeric vector to indicate the times where the patient missed some of the doses specified in the dosing_schedule argument.
+#' @param output.time vector of times to interpolate 
+#' @param output.conc vector of drug concentrations to interpolate
+#' @param scale scaling parameter
+#' @param ... additional arguments for the mrgsim function from mrgsolve package
+#' @return This function returns an interpolation of PK data or a simulated PK model 
 
 #' @export
-pk.function=function(model=cmt1_iv,dosing_schedule=NULL,parameters=NULL,variability=NULL,tend,delta=0.00005,pk.function=NULL,missing_times=NULL,output.time=NULL,output.conc=NULL,scale=1,...){
+#' @examples
+#' \dontrun{
+#' # mrgsolve model specification for a one compartment model and intravenuos administration:
+#'  code_iv <- '$PARAM @annotated
+#'  TVCL   :  8 : Clearance (volume/time)
+#'  TVV    : 80 : Central volume (volume)
+#'  
+#'  $CMT  @annotated
+#'CENT : Central compartment
+#'
+#'
+#' $MAIN
+#' double CL = exp(log(TVCL) + ETA1);
+#' double V = exp(log(TVV)  + ETA2);
+#'
+#' $OMEGA @labels ETA1 ETA2
+#' 0 0
+#' 
+#' $GLOBAL
+#' #define CP (CENT)
+#' 
+#' $PKMODEL ncmt = 1, depot = FALSE
+#' 
+#' $CAPTURE @annotated
+#' CP : Plasma concentration (mass/volume)'
+#' 
+#' #Read the code:
+#' cmt1_iv<- mcode("mymodel", code_iv)%>% Req(CP) 
+#' 
+#' #Specify dosing schedule: 150mg once a day for a month (30 days)
+#' e1 <- ev(amt = 150, ii = 1, addl = 30, time=0)
+#' 
+#' #Define or change the parameters for the model. Use a list:
+#' newpar <- list(TVCL=7.14*24,TVV=155)
+#' # * TVCL: Typical value for the clearance (volume/time) 
+#' # * TVV: Typical value for the volumen of distribution
+#' 
+#' #Pk function to be used during the simulation of the evolutionary process:
+#' pk=pk.function(model=cmt1_iv,dosing_schedule=e1,tend=30,parameters = newpar)
+#'
+#'}
+pk.function=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL,tend,delta=0.00005,pk.function=NULL,missing_times=NULL,output.time=NULL,output.conc=NULL,scale=1,...){
   if(!is.null(output.time)){
    if(!is.numeric(output.time) | !is.numeric(output.conc)) stop('output.time and output.conc must have numeric values')
     pk <- approxfun(output.time, output.conc)
@@ -51,7 +118,7 @@ pk.function=function(model=cmt1_iv,dosing_schedule=NULL,parameters=NULL,variabil
 }
 
 
-mrgsolve.function=function(model=cmt1_iv,dosing_schedule,tend,parameters=NULL,variability=NULL,...){
+mrgsolve.function=function(model,dosing_schedule,tend,parameters=NULL,variability=NULL,...){
   if(!is.null(parameters)){
     model <- param(model, parameters)
   }
@@ -63,8 +130,74 @@ mrgsolve.function=function(model=cmt1_iv,dosing_schedule,tend,parameters=NULL,va
   return(out$CP[2])
 }
 
+#' easy.mrgsim
+#'
+#' Extended version of mrgsim function from mrgsolve package to compute predictions of PK models following mrgsolve model specifications.
+#'
+#' @param model Structural PK model definition (mrgsolve model specification)
+#' @param dosing_schedule Dosing schedule to simulate the PK model
+#' @param parameters Estimates of the pharmacokinetic parameters of the model.
+#' @param variability variability terms for the specified PK parameters.
+#' @param tend Final time for the simulation of the PK model.
+#' @param precision number: increment of the sequence to simulate from 0 to tend.
+#' @param missing_times numeric vector to indicate the times where the patient missed some of the doses specified in the dosing_schedule argument.
+#' @param scale scaling parameter
+#' @param ... additional arguments for the mrgsim function from mrgsolve package
+#' @return This function computes predictions of PK models following mrgsolve model specifications.
+#'
 #' @export
-easy.mrgsim=function(model=cmt1_iv,dosing_schedule=NULL,parameters=NULL,variability=NULL,precision=0.1,tend,scale=1,missing_times=NULL,...){
+#' @examples
+#' \dontrun{
+#' # mrgsolve model specification for a one compartment model and intravenuos administration:
+#'  code_iv <- '$PARAM @annotated
+#'  TVCL   :  8 : Clearance (volume/time)
+#'  TVV    : 80 : Central volume (volume)
+#'  
+#'  $CMT  @annotated
+#'CENT : Central compartment
+#'
+#'
+#' $MAIN
+#' double CL = exp(log(TVCL) + ETA1);
+#' double V = exp(log(TVV)  + ETA2);
+#'
+#' $OMEGA @labels ETA1 ETA2
+#' 0 0
+#' 
+#' $GLOBAL
+#' #define CP (CENT)
+#' 
+#' $PKMODEL ncmt = 1, depot = FALSE
+#' 
+#' $CAPTURE @annotated
+#' CP : Plasma concentration (mass/volume)'
+#' 
+#' #Read the code:
+#' cmt1_iv<- mcode("mymodel", code_iv)%>% Req(CP) 
+#' 
+#' #Specify dosing schedule: 150mg once a day for a month (30 days). The dose is given at time 0.
+#' d1 <- ev(amt = 150, ii = 1, addl = 30, time=0)
+#' 
+#' #Define or change the parameters for the model. Use a list:
+#' newpar <- list(TVCL=7.14*24,TVV=155)
+#' # * TVCL: Typical value for the clearance (volume/time) 
+#' # * TVV: Typical value for the volumen of distribution
+#' # To see the names of the parameters in the model:
+#' param(cmt1_iv)
+#' 
+#' #Simulate the model with easy.mrgsim function 
+#' easy.mrgsim(model=cmt1_iv,dosing_schedule=d1,tend=30,delta=0.1,parameters = newpar) %>% plot
+#'
+#' #Now simulate another dosign schedule: 1600mg once a week for 45 days. The dose is given at day 2.
+#' d2 <- ev(amt = 1600, ii = 7, addl = 30, time=2)
+#' 
+#' easy.mrgsim(model=cmt1_iv,dosing_schedule=d2,tend=45,delta=0.1,parameters = newpar) %>% plot
+#'
+#' #Save the results as a data.frame
+#' Simulation2<-as.data.frame(
+#' easy.mrgsim(model=cmt1_iv,dosing_schedule=d2,tend=45,delta=0.1,parameters = newpar))
+#'}
+easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL,precision=0.1,tend,scale=1,missing_times=NULL,...){
   if(!is.null(parameters)){
     model <- param(model, parameters)
   }
@@ -92,51 +225,39 @@ easy.mrgsim=function(model=cmt1_iv,dosing_schedule=NULL,parameters=NULL,variabil
 # Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL=1, V=100, KA=0.1),method='NLS',weighted = T)
 # Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL=1, V=100, KA=0.1),method='MLE')
 #
-# library(dplyr)
-# data(Indometh)
-# colnames(Indometh)=c('Subject', 'time', 'CONC')
-# obs <- as.data.frame(Indometh) %>%
-#   mutate(evid = 0, cmt = 0, ID = as.numeric(Subject))
-#
-# dose <- distinct(obs, ID) %>%
-#   mutate(amt = 25, time = 0, CONC = NA, evid = 1, cmt = 2)
-#
-# #Put it back together
-# PK <- bind_rows(obs, dose) %>%
-#   arrange(ID, time) %>%
-#   mutate(Subject = NULL)
-#
-# mod <- mread_cache("pk2", modlib())
-#
-# Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL = 2, V2 = 4, Q = 5, V3 = 10),method='MLE',log.yaxis = T)
-# fit=Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL = 2, V2 = 4, Q = 5, V3 = 10),method='NLS',log.yaxis = T, weighted = F)
-# exp(coef(fit))
-# fit=Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL = 2, V2 = 4, Q = 5, V3 = 10),method='NLS',log.yaxis = T, weighted = T)
-# exp(coef(fit))
 
+
+#' Estimate.PK
+#'
+#' Fit Pharmacokinetic (PK) data and estimate PK parameters. The use of other software like NONMEM or MONOLIX is encoraged for estimation of parameters from different individuals.
+#'
+#' @param PK_data Data to fit (drug concentrations over time)
+#' @param DV Column name of the dependent variable (drug concentrations). "CONC" by default.
+#' @param model Structural PK model definition (mrgsolve model specification).
+#' @param initial_estimates list with the initial estimates for the PK parameters.
+#' @param log.yaxis logical to indicate if the values for the dependent variable should be log transformed. FALSE by default.
+#' @param weighted logical. If TRUE a weighted NLS method is applied.
+#' @return This function returns the final estimates for the PK paramters and the plot of the observation values and the prediction of the model
 #' @export
-Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,method=c('NLS','MLE'),log.yaxis=F,weighted=F){
+#' @examples
+#' \dontrun{
+#' data(PK_example)
+#' head(PK.example.data)
+#' #Read code from model repository: 1 compartment model with extravascular administration
+#' cmt1_oral<- mread("PK_models/1cmt_oral")%>% Req(CP) 
+#' #See parameter names in the model:
+#' param(cmt1_oral)
+#' #Estimate parameters:
+#  Estimate.PK(PK_data=PK.example.data,model=cmt1_oral,initial_estimates=c(TVCL=1, TVV=100, TVKA=0.1))
+#' 
+#' }
 
-  # Maximum likelihood
-  mle_fun <- function(p, .mod, .data,.yobs, pred = FALSE,log.transform){
-
-    p <- lapply(p,exp)
-
-    sigma=p$sigma
-    p$sigma=NULL
-
-    .mod <- update(.mod, param=p)
-
-    out <- mrgsim(.mod, data = .data, obsonly=TRUE)
-
-    if(pred) return(as.data.frame(out))
-
-    mle=-sum(dnorm((.yobs),(out$CP),(sigma), log=TRUE))
-    return(mle)
-  }
+Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,log.yaxis=F,weighted=F){
+ CP<-NULL
+ CONC<-NULL
 
   # nonlinear least squares
-  nls_pred <- function(p, .mod, .data,.yobs,pred = FALSE,log.transform=F){
+  nls_pred <- function(p, .mod, .data,.yobs,pred = FALSE){
    # .data <- cbind(.data,exp(p))
      p <- lapply(p,exp)
     .mod <- update(.mod, param=p)
@@ -145,11 +266,7 @@ Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,method=c('NLS','M
     return( out$CP)
   }
 
-  method <- match.arg(method)
-
   obj=nls_pred
-  if(method=='MLE') obj=mle_fun
-
   obs  <- PK_data[PK_data$evid==0,]
   dose <- PK_data[PK_data$evid==1,]
   yobs <- obs[,DV]
@@ -161,29 +278,18 @@ Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,method=c('NLS','M
   }
 
   theta <- log(initial_estimates)
-  if(method=="NLS"){
-    fit <- minpack.lm::nlsLM(yobs~nls_pred(p=eval(parse(text=paste0("c(",paste(names(theta),"=",names(theta),collapse = ","),")")))
-                             ,.mod=model,.data=PK_data),
-               start = theta, weights =  weighted,
-               control=nls.control(maxiter=100,minFactor=1/4096,warnOnly = T),
-              na.action = na.pass)
-
-    est=(coef(fit))
-   result=fit
-  }else{
-    theta=c(theta,sigma=0)
-    fit <- minqa::newuoa(theta, obj, .mod = model, .data=PK_data, .yobs = yobs,log.transform=log.transform)
-    est <- setNames(fit$par, names(theta))
-    OFV=obj(est,model,PK_data,yobs,log.transform=log.transform)
-    AIC=2*OFV+2*length(theta)
-    final_est=exp(est)
-    final_est=final_est[-length(final_est)]
-    names(final_est)=names(initial_estimates)
-    result=list(parameter_estimates=final_est,OFV=OFV,AIC=AIC)
-  }
-
+  
+  fit <- minpack.lm::nlsLM(yobs~nls_pred(p=eval(parse(text=paste0("c(",paste(names(theta),"=",names(theta),collapse = ","),")")))
+                                         ,.mod=model,.data=PK_data),
+                           start = theta, weights =  weighted,
+                           control=nls.control(maxiter=100,minFactor=1/4096,warnOnly = T),
+                           na.action = na.pass)
+  
+  est=(coef(fit))
+  result=fit
+ 
   model=update(model,end=max(PK_data$time), delta=0.5)
-  pred <-as.data.frame(obj(est,model,PK_data,yobs,pred=TRUE,log.transform=log.transform))
+  pred <-as.data.frame(obj(est,model,PK_data,yobs,pred=TRUE))
 
 
   p<-ggplot() +

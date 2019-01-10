@@ -42,6 +42,7 @@ curve.fit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),...){
 #' @param IC string for supplying the information criterion to be used. "AIC" and "BIC" are the two options. "AIC" by default.
 #' @param type a character string specifying the data type (parameter estimation will depend on the data type as different log likelihood function will be used).
 #' @param ... Additional arguments for the selection of the best model fitting function. See ?model.select for more info.
+#' @param compare logical indicating if the result of all the compared models should be returned (TRUE) or only the result of the model with the lowest AIC/BIC (FALSE, default) 
 #' @return This function returns the best model fitted to the data.
 #' @export
 best.singlefit=function(data,resp="Net_growth",conc='CONC',type='continuous',IC='AIC',compare=F, ...){
@@ -55,7 +56,7 @@ best.singlefit=function(data,resp="Net_growth",conc='CONC',type='continuous',IC=
 
   if(!all(is.na(eval(parse(text=paste0('data$',resp)))))){
 
-    M1=suppressWarnings(model.select(eval(parse(text=formu)),data=data, list(LL.4(),L.3(),L.4(),L.5(),LL.2(),LL.3(), LL.5(), W1.2(), W1.3(), W1.4(), W2.4(), EXD.2(),EXD.3(),G.2(),G.3(),G.4(), baro5(),LN.3(),LN.4()),type=type,icfct=icfct,...))
+    M1=suppressWarnings(model.select(eval(parse(text=formu)),data=data, list(drc::LL.4(),drc::L.3(),drc::L.4(),drc::L.5(),drc::LL.2(),drc::LL.3(), drc::LL.5(), drc::W1.2(), drc::W1.3(), drc::W1.4(), drc::W2.4(), drc::EXD.2(),drc::EXD.3(),drc::G.2(),drc::G.3(),drc::G.4(), drc::baro5(),drc::LN.3(),drc::LN.4()),type=type,icfct=icfct,...))
     #linear model
     L1=eval(parse(text=paste0('lm(',formu, ',data=data)')))
     ic=AIC(L1)
@@ -106,7 +107,7 @@ linear.fit=function(data,resp="Net_growth",conc="CONC",...){
   return(fit)
 }
 
-#' plot.model.fit
+#' modelfit.plot
 #'
 #' Function to plot the results of fitted models.
 #'
@@ -116,7 +117,8 @@ linear.fit=function(data,resp="Net_growth",conc="CONC",...){
 #' @return A graph with the real observations plus the prediction of a previously fitted model.
 
 #' @export
-plot.model.fit=function(model, linear.model=F,linecol='firebrick'){
+modelfit.plot=function(model, linear.model=F,linecol='firebrick'){
+  CONC<-x<-y<-NULL
   fitdata=model$data
   effect=colnames(fitdata)[2]
   colnames(fitdata)[2]="effect"
@@ -150,9 +152,15 @@ plot.model.fit=function(model, linear.model=F,linecol='firebrick'){
 #' @param linear.model logical value indicating whether the curve should be fitted using a linear model. If TRUE, the fct argument is ignored. FALSE by default.
 #' @param ... Additional arguments for the model fitting function. See ?drc::drm for more info.
 #' @return This function returns the coefficient estimates of the fitted model and the corresponding plots for each cell line.
-
+#' @export
 Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),linear.model=F,...){
 
+  Type<-NULL
+  Cell.line<-NULL
+  CONC<-NULL
+  x<-NULL
+  y<-NULL
+  
   fit.result<- vector("list", length = length(unique(data$Cell.line))*length(unique(data$Type)))
   plot_fit<- vector("list", length = length(unique(data$Cell.line))*length(unique(data$Type)))
   l=0
@@ -222,10 +230,14 @@ Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),l
 #' @param type a character string specifying the data type (parameter estimation will depend on the data type as different log likelihood function will be used).
 #' @param ... Additional arguments for the selection of the best model fitting function. See ?model.select for more info.
 #' @return This function returns the best model fitted to each cell line data.
-
+#' @export
 Multiple.best.singlefit=function(data,resp="Net_growth",conc='CONC',IC='AIC',type='continuous',...){
   #parameters=c()
-  if(!(any(colnames(data)=="Type"))){
+ Type<-NULL
+ Cell.line<-NULL
+ CONC<-x<-y<-NULL
+ 
+   if(!(any(colnames(data)=="Type"))){
     data$Type=0
   }
   #Is there a cell line column?
@@ -278,7 +290,7 @@ Multiple.best.singlefit=function(data,resp="Net_growth",conc='CONC',IC='AIC',typ
 #'
 #'  Comparison of different models using the following criteria: the log likelihood value, Akaike's or Bayes information criterion (AIC) or the estimated residual standard error.
 #'
-#' @param formula
+#' @param formula a symbolic description of the model to be fit. Either of the form 'response ~ dose' or as a data frame with response values in first column and dose values in second column.
 #' @param data Concentration-response dataframe.
 #' @param fctList a list of dose-response functions to be compared.
 #' @param type a character string specifying the data type (parameter estimation will depend on the data type as different log likelihood function will be used).
@@ -287,7 +299,7 @@ Multiple.best.singlefit=function(data,resp="Net_growth",conc='CONC',IC='AIC',typ
 #' @param icfct function supplying the information criterion to be used. "AIC" and "BIC" are the two options. "AIC" by default.
 #' @param ... Additional arguments for the model fitting function. See ?drc::drm for more info.
 #' @return This function compares different models using the following criteria: the log likelihood value, Akaike's or Bayes information criterion (AIC) or the estimated residual standard error.
-
+#' @export
 model.select=function (formula, data,fctList = NULL, type='continuous',nested = FALSE, sorted = c("IC","Res var", "Lack of fit", "no"), icfct = AIC,...)
 {
   #options(show.error.messages = FALSE) #The user can see in the final matrix if an error has ocurred or not when fitting the model
@@ -297,7 +309,7 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
   }
   lenFL <- length(fctList)
   for(i in 1:lenFL){
-    object=try(drm(formula, data=data, fct=eval(parse(text=paste0(fctList[[i]]$name,"()"))),type=type,...),silent=TRUE)
+    object=try(drc::drm(formula, data=data, fct=eval(parse(text=paste0(fctList[[i]]$name,"()"))),type=type,...),silent=TRUE)
     if(!inherits(object, "try-error")){
       fctList=fctList[-which(lapply(fctList,function(x) x$name==object$fct$name)==T)] #Elimino el que ha funcionado de la lista
       break #Si no falla, seguimos
@@ -311,7 +323,7 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
   retMat <- matrix(0, lenFL + 1, 3 + contData + nested)
   retMat[1, 1] <- logLik(object)
   retMat[1, 2] <- icfct(object)
-  retMat[1, 3] <- modelFit(object)[2, 5]
+  retMat[1, 3] <- drc::modelFit(object)[2, 5]
   if (contData) {
     tryRV <- try(summary(object)$resVar, silent = TRUE)
     if (!inherits("tryRV", "try-error")) {
@@ -334,7 +346,7 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
       if (!inherits(tempObj, "try-error")) {
         retMat[i + 1, 1] <- logLik(tempObj)
         retMat[i + 1, 2] <- icfct(tempObj)
-        retMat[i + 1, 3] <- modelFit(tempObj)[2, 5]
+        retMat[i + 1, 3] <- drc::modelFit(tempObj)[2, 5]
         if (contData) {
           tryRV2 <- try(summary(tempObj)$resVar, silent = TRUE)
           if (!inherits("tryRV2", "try-error")) {
