@@ -27,4 +27,11 @@ This function returns the coefficient estimates of the fitted model and the corr
 \description{
 Multiple concentration-response fit
 }
+\examples{
+\dontrun{
+data(AU565_dataset) 
+#Fit the data with a 4 parameter log-logistic function:
+Multiple.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+}
+}
 

@@ -31,8 +31,8 @@ head(GD)
 GD=HSA(GD,resp='Birth_rate',conc1='CONC',conc2='CONC2')
 head(GD)
 rmap <- braidReports::responseMap(HSA_response~CONC+CONC2,GD,logscale=T)
-plot.ResponseSurface(rmap,xl="[Dactolisib] (µM)",yl="[Trametinib] (µM)",zl="Birth rate of \\n sensitive cells (1/h)",
-title="HSA")
+plot.ResponseSurface(rmap,xl="[Dactolisib] (µM)",yl="[Trametinib] (µM)",
+zl="Birth rate of \\n sensitive cells (1/h)",title="HSA")
 }
 }
 

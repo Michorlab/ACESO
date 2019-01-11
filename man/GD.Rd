@@ -25,7 +25,7 @@ The data consists of a dataframe named GD with the following columns:
 \examples{
 \dontrun{
  data(Dactolisib_Trametinib_rates)
- print(GD)
+ head(GD)
 }
 }
 \keyword{datasets}

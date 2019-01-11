@@ -25,4 +25,12 @@ This function returns the results of the model fitting function
 \description{
 A general model fitting function for single drug effects using drm from the drc package.
 }
+\examples{
+\dontrun{
+data(AU565_dataset) 
+#Fit the data with a 4 parameter log-logistic function:
+curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+#To see the name of other nonlinear function write \\code{drc::getMeanFunctions()}
+}
+}
 

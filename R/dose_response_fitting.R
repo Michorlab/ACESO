@@ -11,6 +11,13 @@
 #' @param ... Additional arguments for the model fitting function. See ?drc::drm for more info.
 #' @return This function returns the results of the model fitting function
 #' @export
+#' @examples
+#' \dontrun{
+#' data(AU565_dataset) 
+#' #Fit the data with a 4 parameter log-logistic function:
+#' curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+#' #To see the name of other nonlinear function write \code{drc::getMeanFunctions()}
+#' }
 curve.fit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),...){
 
   colnames(data)[colnames(data)=='effect']='effect_2'
@@ -45,6 +52,16 @@ curve.fit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),...){
 #' @param compare logical indicating if the result of all the compared models should be returned (TRUE) or only the result of the model with the lowest AIC/BIC (FALSE, default) 
 #' @return This function returns the best model fitted to the data.
 #' @export
+#' @examples
+#' \dontrun{
+#' data(AU565_dataset) 
+#' #Fit the data with a 4 parameter log-logistic function:
+#' best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC")
+#' # The best model is the 3 parameter log-logistic function. See ?drc::LL.3
+#' #To see the objective function and AIC of all the compared functions, 
+#' # use the compare argument of the function:
+#' best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",compare=T)
+#' }
 best.singlefit=function(data,resp="Net_growth",conc='CONC',type='continuous',IC='AIC',compare=F, ...){
 
   if(conc!='CONC') colnames(data)[colnames(data)=='CONC']='CONC_2'
@@ -114,10 +131,20 @@ linear.fit=function(data,resp="Net_growth",conc="CONC",...){
 #' @param model a model object for which prediction is desired.
 #' @param linear.model logic argument to specify if the fitted model is linear (TRUE) or non-linear (FALSE).
 #' @param linecol color for the prediction line.
+#' @param log.x logical. Logaritmically transform x axis values? FALSE by default.
 #' @return A graph with the real observations plus the prediction of a previously fitted model.
 
 #' @export
-modelfit.plot=function(model, linear.model=F,linecol='firebrick'){
+#' @examples
+#' \dontrun{
+#' data(AU565_dataset) 
+#' #Fit the data with a 4 parameter log-logistic function:
+#' fit<-curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+#' #To see the name of other nonlinear function write \code{drc::getMeanFunctions()}
+#' modelfit.plot(fit)
+#' modelfit.plot(fit,log.x=F)
+#' }
+modelfit.plot=function(model, linear.model=F,log.x=F,linecol='firebrick'){
   CONC<-x<-y<-NULL
   fitdata=model$data
   effect=colnames(fitdata)[2]
@@ -136,6 +163,9 @@ modelfit.plot=function(model, linear.model=F,linecol='firebrick'){
   plot_fit<-ggplot2::ggplot(data=fitdata,ggplot2::aes(x=CONC,y=effect))+ggplot2::geom_point(size=1.5)+
     ggplot2::geom_line(data=fit.ggplot,ggplot2::aes(x=(x),y=(y)),size=1.3,col=linecol)+ggplot2::xlab("Concentrations")+ggplot2::ylab(effect)+
     theme_minimal()
+  if(log.x){
+    plot_fit<-plot_fit+scale_x_continuous(trans="log")
+  } 
 
   return(plot_fit)
 }
@@ -153,6 +183,12 @@ modelfit.plot=function(model, linear.model=F,linecol='firebrick'){
 #' @param ... Additional arguments for the model fitting function. See ?drc::drm for more info.
 #' @return This function returns the coefficient estimates of the fitted model and the corresponding plots for each cell line.
 #' @export
+#' @examples
+#' \dontrun{
+#' data(AU565_dataset) 
+#' #Fit the data with a 4 parameter log-logistic function:
+#' Multiple.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+#' }
 Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),linear.model=F,...){
 
   Type<-NULL
@@ -231,6 +267,13 @@ Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),l
 #' @param ... Additional arguments for the selection of the best model fitting function. See ?model.select for more info.
 #' @return This function returns the best model fitted to each cell line data.
 #' @export
+#' @examples
+#' \dontrun{
+#' data(AU565_dataset) 
+#' #Fit the data with a 4 parameter log-logistic function:
+#' Multiple.best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC")
+#' # The best model is the 3 parameter log-logistic function. See ?drc::LL.3
+#' }
 Multiple.best.singlefit=function(data,resp="Net_growth",conc='CONC',IC='AIC',type='continuous',...){
   #parameters=c()
  Type<-NULL

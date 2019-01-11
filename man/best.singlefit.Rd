@@ -28,4 +28,15 @@ This function returns the best model fitted to the data.
 \description{
 Function where linear and several non-linear models are used to fit the curve of single drug effects using drm from the drc package.
 }
+\examples{
+\dontrun{
+data(AU565_dataset) 
+#Fit the data with a 4 parameter log-logistic function:
+best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC")
+# The best model is the 3 parameter log-logistic function. See ?drc::LL.3
+#To see the objective function and AIC of all the compared functions, 
+# use the compare argument of the function:
+best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",compare=T)
+}
+}
 

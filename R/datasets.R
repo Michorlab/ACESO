@@ -81,7 +81,33 @@ NULL
 #'@examples
 #'\dontrun{
 #'  data(Dactolisib_Trametinib_rates)
-#'  print(GD)
+#'  head(GD)
+#'}
+#'@keywords datasets
+NULL
+
+#' AU565 dataset
+#' 
+#' Dataset containing the effect of a DNA-alkylator on the viable cell counts of AU565 cell line.
+#' @name AU565_dataset
+#' @docType data
+#'
+#'@usage data(AU565_dataset)
+#'
+#'@details
+#'  The data consists of a dataframe named GD with the following columns:
+#'  \itemize{
+#'   \item Cell.line: name of the cell line used in the experiment. AU565 in this example.
+#'   \item CONC: concentration of the drug 1. Numeric column.
+#'   \item Type: drug sensitive cell type. Number 0 in this case.
+#'   \item Viable.cells: Total cell count.
+#'   \item Replicate: Technical replicate
+#' }
+#' 
+#'@examples
+#'\dontrun{
+#'  data(AU565_dataset)
+#'  head(AU565_dataset)
 #'}
 #'@keywords datasets
 NULL

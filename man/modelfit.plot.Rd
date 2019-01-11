@@ -4,12 +4,14 @@
 \alias{modelfit.plot}
 \title{modelfit.plot}
 \usage{
-modelfit.plot(model, linear.model = F, linecol = "firebrick")
+modelfit.plot(model, linear.model = F, log.x = F, linecol = "firebrick")
 }
 \arguments{
 \item{model}{a model object for which prediction is desired.}
 
 \item{linear.model}{logic argument to specify if the fitted model is linear (TRUE) or non-linear (FALSE).}
+
+\item{log.x}{logical. Logaritmically transform x axis values? FALSE by default.}
 
 \item{linecol}{color for the prediction line.}
 }
@@ -18,5 +20,15 @@ A graph with the real observations plus the prediction of a previously fitted mo
 }
 \description{
 Function to plot the results of fitted models.
+}
+\examples{
+\dontrun{
+data(AU565_dataset) 
+#Fit the data with a 4 parameter log-logistic function:
+fit<-curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+#To see the name of other nonlinear function write \\code{drc::getMeanFunctions()}
+modelfit.plot(fit)
+modelfit.plot(fit,log.x=F)
+}
 }
 

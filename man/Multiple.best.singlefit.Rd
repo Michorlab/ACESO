@@ -26,4 +26,12 @@ This function returns the best model fitted to each cell line data.
 \description{
 Function where linear and several non-linear models are used to fit the curve of single drug effects on multiple cell lines at the same time.
 }
+\examples{
+\dontrun{
+data(AU565_dataset) 
+#Fit the data with a 4 parameter log-logistic function:
+Multiple.best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC")
+# The best model is the 3 parameter log-logistic function. See ?drc::LL.3
+}
+}
 
