@@ -27,6 +27,14 @@ The input dataset with a new column called 'loewe_additivity' to store the expec
 Fill the dataset with the predicted effect under Loewe model
 }
 \examples{
-NULL
+\dontrun{
+data(Dactolisib_Trametinib_rates)
+head(GD)
+GD=Loewe(data=GD,resp = 'Birth_rate')
+head(GD)
+rmap <-  braidReports::responseMap(loewe_additivity~CONC+CONC2,GD,logscale=T)#' 
+plot.ResponseSurface(rmap,xl="[Dactolisib] (µM)",yl="[Trametinib] (µM)",zl="Birth rate of \\n sensitive cells (1/h)",
+title="Loewe")
+}
 }
 

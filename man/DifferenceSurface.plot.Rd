@@ -33,6 +33,20 @@ A ggplot2 plot object, with the appropriate scales and labels added.
 \description{
 DifferenceSurface.plot
 }
+\examples{
+\dontrun{
+data(Dactolisib_Trametinib_combination)
+growth_data<-net_growth_rate(Dactolisib_Trametinib_combination)
+GD=growth_data[,c('Cell.line','CONC','CONC2','Net_growth','Type','Birth_rate','Death_rate')]
+GD=unique(GD)
+rmap <- braidReports::responseMap(Net_growth~CONC+CONC2,GD,logscale=T,interpolate=FALSE)
+DifferenceSurface.plot(rmap,zcenter=0.01,xl=expression(paste("[Dactolisib] (",mu,"M)", sep="")),
+yl=expression(paste("[Trametinib] (",mu,"M)", sep="")),
+zl="Net growth rate of \\n sensitive cells",
+mid="yellow",low="hotpink1",high="darkturquoise")
+
+}
+}
 \seealso{
 braidReports::responseMap
 }

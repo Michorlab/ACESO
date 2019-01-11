@@ -15,6 +15,18 @@ NULL
 #' @return A ggplot2 plot object, with the appropriate scales and labels added.
 #' @seealso braidReports::responseMap
 #' @export
+#' @examples 
+#' \dontrun{
+#' data(Dactolisib_Trametinib_combination)
+#' growth_data<-net_growth_rate(Dactolisib_Trametinib_combination)
+#' rmap <- braidReports::responseMap(Net_growth~CONC+CONC2,GD,logscale=T)
+#'
+#' ResponseSurface.plot(rmap,xl=expression(paste("[Dactolisib] (",mu,"M)", sep="")),
+#'                     yl=expression(paste("[Trametinib] (",mu,"M)", sep="")),
+#'                     zl="Net growth rate of \n sensitive cells",
+#'                    palette=c("hotpink1","yellow","darkturquoise"))
+#' }
+
 ResponseSurface.plot <- function(rmap,palette=NULL,cscale=NULL,xl=expression(CONC),yl=expression(CONC2),zl="Effect",title="") {
   fp <- rmap+labs(x=xl,y=yl)+ stat_contour(aes(z = rmap$data$z),colour="black", alpha=.2) +ggtitle(paste(title))
   if (is.null(palette)) { palette=c("magenta","yellow","darkturquoise") }
@@ -52,7 +64,20 @@ ResponseSurface.plot <- function(rmap,palette=NULL,cscale=NULL,xl=expression(CON
 #' @return A ggplot2 plot object, with the appropriate scales and labels added.
 #' @seealso braidReports::responseMap
 #' @export
-DifferenceSurface.plot <- function(rmap,zcenter=NULL,xl=expression(CONC),yl=expression(CONC2),zl="Effect",low="#e9a3c9",mid="#f7f7f7",high="#4dac26",title="") {
+#' @examples 
+#' \dontrun{
+#' data(Dactolisib_Trametinib_combination)
+#' growth_data<-net_growth_rate(Dactolisib_Trametinib_combination)
+#' GD=growth_data[,c('Cell.line','CONC','CONC2','Net_growth','Type','Birth_rate','Death_rate')]
+#' GD=unique(GD)
+#' rmap <- braidReports::responseMap(Net_growth~CONC+CONC2,GD,logscale=T,interpolate=FALSE)
+#' DifferenceSurface.plot(rmap,zcenter=0.01,xl=expression(paste("[Dactolisib] (",mu,"M)", sep="")),
+#' yl=expression(paste("[Trametinib] (",mu,"M)", sep="")),
+#' zl="Net growth rate of \n sensitive cells",
+#' mid="yellow",low="hotpink1",high="darkturquoise")
+#'
+#' }
+DifferenceSurface.plot <- function(rmap,zcenter=NULL,xl=expression(CONC),yl=expression(CONC2),zl="Effect",low="#e9a3c9",mid="#f7f7f7",high="#4dac26",title=""){
   fp <- rmap+labs(x=xl,y=yl)+ggtitle(paste(title))
   if (!is.null(zcenter)) { fp <- fp+scale_fill_gradient2(zl,midpoint=zcenter,mid = mid,low=low,high=high) }
   #if (is.null(palette)) { palette=c("magenta","yellow","darkturquoise") }

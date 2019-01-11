@@ -33,4 +33,11 @@ This function returns a fitted gam object (see ?gamObject for a detailed descrip
 \description{
 Fits a generalized additive model (gam) or  a polynomial surface (loess) to data of multiple cell lines.
 }
+\examples{
+\dontrun{
+data(Dactolisib_Trametinib_rates)
+gam.model=Multiple.resp.surface.fit(GD,resp='Birth_rate',conc1='CONC',conc2='CONC2', title=", GAM with raw data")
+print(gam.model)
+}
+}
 

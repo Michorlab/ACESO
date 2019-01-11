@@ -25,6 +25,14 @@ The input dataset with a new column called 'HSA_response' to store the expected 
 Fill the dataset with the predicted effect under Highest Single Agent (HSA) model
 }
 \examples{
-NULL
+\dontrun{
+data(Dactolisib_Trametinib_rates)
+head(GD)
+GD=HSA(GD,resp='Birth_rate',conc1='CONC',conc2='CONC2')
+head(GD)
+rmap <- braidReports::responseMap(HSA_response~CONC+CONC2,GD,logscale=T)
+plot.ResponseSurface(rmap,xl="[Dactolisib] (µM)",yl="[Trametinib] (µM)",zl="Birth rate of \\n sensitive cells (1/h)",
+title="HSA")
+}
 }
 

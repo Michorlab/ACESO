@@ -6,9 +6,35 @@
 #' @param Inputdata name of the dataframe where the cell viability data is saved.
 #' @param death_rate numeric value for the death rate. Default to NULL.
 #' @param birth_rate numeric value for the birth rate. Default to NULL.
-#' @param time0_data boolean argument to specify if the cell viability data for time 0 values should be used or not. Default to TRUE.
+#' @param time0_data logical argument to specify if the cell viability data for time 0 values should be used or not. Default to TRUE.
 #' @return The Inputdata dataframe with the net growth rate values for each cell type added.
 #' @export
+#' @examples 
+#' \dontrun{
+#' data(Dactolisib_Trametinib_combination)
+#' growth_data<-net_growth_rate(Dactolisib_Trametinib_combination)
+#' library(ggplot2)
+#' ggplot(data=growth_data,aes(x=(CONC),y=Net_growth,col=factor(CONC2)))+geom_point()+
+#' geom_line(linetype="dashed")+
+#' theme(text = element_text(size=14))+xlab(expression(paste("[Dactolisib] (",mu,"M)", sep="")))+
+#' scale_colour_discrete(name=expression(paste("[Trametinib] (",mu,"M)", sep="")))+
+#' theme_classic()+ylab("Net growth (1/h)")
+#'  
+#' #Calculate the birth rate from the net growth rate assuming a death of 0.021 1/h
+#' ###Needed for dataset with more than 1 cell line
+#' d0=vector("list", length = length(unique(growth_data$Cell.line))) 
+#' ###To identify each death rate with the name of the cell line
+#' names(d0)=unique(as.character(growth_data$Cell.line)) 
+#' ###Introduce the value of 0.021 1/h
+#' d0[[1]]=0.021
+#' growth_data<-net_growth_rate(growth_data,death_rate = d0)
+#'
+#' ggplot(data=growth_data,aes(x=(CONC),y=Birth_rate,col=factor(CONC2)))+geom_point()+
+#' geom_line(linetype="dashed")+
+#' theme(text = element_text(size=14))+xlab(expression(paste("[Dactolisib] (",mu,"M)", sep="")))+
+#' scale_colour_discrete(name=expression(paste("[Trametinib] (",mu,"M)", sep="")))+
+#' theme_classic()+ylab("Birth rate (1/h)")
+#' }
 
 net_growth_rate=function(Inputdata,death_rate=NULL,birth_rate=NULL,time0_data=T){
   Viable.cells<-NULL

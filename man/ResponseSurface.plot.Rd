@@ -29,6 +29,18 @@ A ggplot2 plot object, with the appropriate scales and labels added.
 \description{
 ResponseSurface.plot
 }
+\examples{
+\dontrun{
+data(Dactolisib_Trametinib_combination)
+growth_data<-net_growth_rate(Dactolisib_Trametinib_combination)
+rmap <- braidReports::responseMap(Net_growth~CONC+CONC2,GD,logscale=T)
+
+ResponseSurface.plot(rmap,xl=expression(paste("[Dactolisib] (",mu,"M)", sep="")),
+                    yl=expression(paste("[Trametinib] (",mu,"M)", sep="")),
+                    zl="Net growth rate of \\n sensitive cells",
+                   palette=c("hotpink1","yellow","darkturquoise"))
+}
+}
 \seealso{
 braidReports::responseMap
 }

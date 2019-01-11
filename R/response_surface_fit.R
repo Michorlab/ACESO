@@ -17,6 +17,14 @@ NULL
 #' @param method array to specify if a generalized additive model (gam) or  a polynomial surface (loess) model must be fitted to the data.
 #' @return This function returns a fitted gam object (see ?gamObject for a detailed description) or an object of class "loess".
 #' @export
+#' @examples 
+#' \dontrun{
+#' data(Dactolisib_Trametinib_rates)
+#' gam.model=resp.surface.fit(GD,resp='Birth_rate',conc1='CONC',conc2='CONC2')
+#' print(gam.model)
+#' }
+
+
 resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Drug1.name='Drug 1',Drug2.name='Drug 2',method=c('gam','loess')){
   method <- match.arg(method)
 
@@ -57,6 +65,12 @@ resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Drug
 #' @param title title for the drug.
 #' @return This function returns a fitted gam object (see ?gamObject for a detailed description) or an object of class "loess".
 #' @export
+#' @examples 
+#' \dontrun{
+#' data(Dactolisib_Trametinib_rates)
+#' gam.model=Multiple.resp.surface.fit(GD,resp='Birth_rate',conc1='CONC',conc2='CONC2', title=", GAM with raw data")
+#' print(gam.model)
+#' }
 Multiple.resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Drug1.name='Drug 1',Drug2.name='Drug 2',logscale=T,method=c('gam','loess'),title=""){
  Cell.line<-NULL
  Type<-NULL
