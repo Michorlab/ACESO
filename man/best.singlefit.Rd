@@ -4,13 +4,13 @@
 \alias{best.singlefit}
 \title{best.singlefit}
 \usage{
-best.singlefit(data, resp = "Net_growth", conc = "CONC",
+best.singlefit(data, resp = "Birth_rate", conc = "CONC",
   type = "continuous", IC = "AIC", compare = F, ...)
 }
 \arguments{
 \item{data}{Concentration-effect dataframe.}
 
-\item{resp}{Name of the column with the response values. Default is Net_growth.}
+\item{resp}{Name of the column with the response values. Default is Birth_rate.}
 
 \item{conc}{Name of the column with the drug concentration values.}
 

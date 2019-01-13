@@ -43,11 +43,11 @@ net_growth_rate=function(Inputdata,death_rate=NULL,birth_rate=NULL,time0_data=T)
   CONC<-NULL
   Type<-NULL
   "."<-"callate"
-
+  
   #For multiple cell lines:
   for(l in unique(Inputdata$Cell.line)){
     data=Inputdata[Inputdata$Cell.line==l,]
-
+    
     #If Cell count is measured for a unique time
     if(length(unique(data$Time))==1){
       Net_growth=with(data,log(Viable.cells/Cell_Count_0)/Time)
@@ -61,14 +61,14 @@ net_growth_rate=function(Inputdata,death_rate=NULL,birth_rate=NULL,time0_data=T)
         Time0=data[data$Time==unique(data$Time)[is.finite(unique(data$Time))][1],]
         Time0$Time=0
         Time0$Viable.cells=Time0$Cell_Count_0
-        gd=rbind(Time0,data)
+        gd=rbind(Time0,data) 
+        gd=data.table::as.data.table(gd)
       }else if(time0_data==F){
         gd=data[data$Time!=0,]
+        gd=data.table::as.data.table(gd)
       }
-
       #For every dose and cell type: fit the linear curve
       #data$Net_growth<-NA
-      gd=data.table::as.data.table(gd)
       gd[,Net_growth:=coef(lm(log(Viable.cells)~Time))[2],by=.(CONC,Type)]
       #for(i in unique(gd$CONC)[is.finite(unique(gd$CONC))]){
       #fit<-lm(log(Viable.cells)~Time, data=gd[gd$CONC==i,])
@@ -95,18 +95,19 @@ net_growth_rate=function(Inputdata,death_rate=NULL,birth_rate=NULL,time0_data=T)
         data$Birth_rate[data$Type==i]<-birth_rate[[l]][i+1]
       }
       data$Death_rate<-data$Birth_rate-data$Net_growth
-
+      
     }
     if(which(unique(Inputdata$Cell.line) %in% l)==1){
       edited_data=data
     }else{
       edited_data=data.table::rbindlist(list(edited_data,data),use.names=T,fill=T)
+      edited_data=as.data.frame(edited_data)
     }
-
+    
   }
-
+  
   return(edited_data)
-
+  
 }
 
 

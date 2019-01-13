@@ -24,7 +24,7 @@ resp.surface.fit(data, resp = "Birth_rate", conc1 = "CONC",
 \item{method}{array to specify if a generalized additive model (gam) or  a polynomial surface (loess) model must be fitted to the data.}
 }
 \value{
-This function returns a fitted gam object (see ?gamObject for a detailed description) or an object of class "loess".
+This function returns a fitted gam object (see \code{\link[mgcv]{gamObject}} for a detailed description) or an object of class "loess".
 }
 \description{
 Fits a generalized additive model (gam) or  a polynomial surface (loess) to data.

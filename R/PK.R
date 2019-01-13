@@ -7,7 +7,7 @@ NULL
 NULL
 #' @import utils
 NULL
-#' @import mrgsolve
+#' @importFrom mrgsolve mrgsim param omat ev mcode
 NULL
 #' @importFrom minpack.lm nlsLM
 NULL
@@ -74,6 +74,8 @@ read.PKdata=function(file){
 #' $CAPTURE @annotated
 #' CP : Plasma concentration (mass/volume)'
 #' 
+#' library(mrgsolve)
+#' 
 #' #Read the code:
 #' cmt1_iv<- mcode("mymodel", code_iv)%>% Req(CP) 
 #' 
@@ -130,7 +132,7 @@ mrgsolve.function=function(model,dosing_schedule,tend,parameters=NULL,variabilit
   return(out$CP[2])
 }
 
-#' easy.mrgsim
+#' Simulate from a model object
 #'
 #' Extended version of mrgsim function from mrgsolve package to compute predictions of PK models following mrgsolve model specifications.
 #'
@@ -144,7 +146,6 @@ mrgsolve.function=function(model,dosing_schedule,tend,parameters=NULL,variabilit
 #' @param scale scaling parameter
 #' @param ... additional arguments for the mrgsim function from mrgsolve package
 #' @return This function computes predictions of PK models following mrgsolve model specifications.
-#'
 #' @export
 #' @examples
 #' \dontrun{
@@ -171,6 +172,8 @@ mrgsolve.function=function(model,dosing_schedule,tend,parameters=NULL,variabilit
 #' 
 #' $CAPTURE @annotated
 #' CP : Plasma concentration (mass/volume)'
+#' 
+#' library(mrgsolve)
 #' 
 #' #Read the code:
 #' cmt1_iv<- mcode("mymodel", code_iv)%>% Req(CP) 
@@ -219,14 +222,6 @@ easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL
 
 
 
-# PK=read.csv('D:\\Mis Documentos\\ITZIAR\\Boston\\PK\\Erlotinib_1D_sparse.csv',header = T)
-# mod <- mread("pk1", modlib())
-# Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL=1, V=100, KA=0.1))
-# Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL=1, V=100, KA=0.1),method='NLS',weighted = T)
-# Estimate.PK(PK_data=PK,model=mod,initial_estimates=c(CL=1, V=100, KA=0.1),method='MLE')
-#
-
-
 #' Estimate.PK
 #'
 #' Fit Pharmacokinetic (PK) data and estimate PK parameters. The use of other software like NONMEM or MONOLIX is encoraged for estimation of parameters from different individuals.
@@ -260,7 +255,7 @@ Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,log.yaxis=F,weigh
   nls_pred <- function(p, .mod, .data,.yobs,pred = FALSE){
    # .data <- cbind(.data,exp(p))
      p <- lapply(p,exp)
-    .mod <- update(.mod, param=p)
+    .mod <- mrgsolve::update(.mod, param=p)
     out <- mrgsim(.mod, data = .data, obsonly = TRUE)
     if(pred) return(as.data.frame(out))
     return( out$CP)
@@ -288,7 +283,7 @@ Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,log.yaxis=F,weigh
   est=(coef(fit))
   result=fit
  
-  model=update(model,end=max(PK_data$time), delta=0.5)
+  model=mrgsolve::update(model,end=max(PK_data$time), delta=0.5)
   pred <-as.data.frame(obj(est,model,PK_data,yobs,pred=TRUE))
 
 

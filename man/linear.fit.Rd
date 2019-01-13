@@ -4,12 +4,12 @@
 \alias{linear.fit}
 \title{linear.fit}
 \usage{
-linear.fit(data, resp = "Net_growth", conc = "CONC", ...)
+linear.fit(data, resp = "Birth_rate", conc = "CONC", ...)
 }
 \arguments{
 \item{data}{Concentration-effect dataframe.}
 
-\item{resp}{Name of the column with the response values. Default is Net_growth.}
+\item{resp}{Name of the column with the response values. Default is Birth_rate.}
 
 \item{conc}{Name of the column with the drug concentration values.}
 

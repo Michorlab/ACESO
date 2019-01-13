@@ -26,7 +26,7 @@ Function to plot the results of fitted models.
 data(AU565_dataset) 
 #Fit the data with a 4 parameter log-logistic function:
 fit<-curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
-#To see the name of other nonlinear function write \\code{drc::getMeanFunctions()}
+#To see the name of other nonlinear function write \\code{\\link[drc]{getMeanFunctions}}
 modelfit.plot(fit)
 modelfit.plot(fit,log.x=F)
 }

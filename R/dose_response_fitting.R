@@ -4,11 +4,11 @@
 #' A general model fitting function for single drug effects using drm from the drc package.
 #'
 #' @param data Concentration-effect dataframe.
-#' @param resp Name of the column with the response values. Default is Net_growth.
-#' @param conc Name of the column with the drug concentration values.
-#' @param fct nonlinear function. Currently available functions can be found in drc package (use drc::getMeanFunctions() for a full list).
+#' @param resp Name of the column with the response values. Default is "Birth_rate".
+#' @param conc Name of the column with the drug concentration values. Default to "CONC".
+#' @param fct nonlinear function. Currently available functions can be found in drc package (use \code{\link[drc]{getMeanFunctions}} for a full list).
 #'  By default the four-parameter log-logistic model LL.4 is used. More examples include the three- and five-parameter log-logistic models LL.3, LL.5,the Weibull model W1.4, etc.
-#' @param ... Additional arguments for the model fitting function. See ?drc::drm for more info.
+#' @param ... Additional arguments for the model fitting function. See \code{\link[drc]{drm}}for more info.
 #' @return This function returns the results of the model fitting function
 #' @export
 #' @examples
@@ -16,9 +16,8 @@
 #' data(AU565_dataset) 
 #' #Fit the data with a 4 parameter log-logistic function:
 #' curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
-#' #To see the name of other nonlinear function write \code{drc::getMeanFunctions()}
 #' }
-curve.fit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),...){
+curve.fit=function(data,resp="Birth_rate",conc='CONC',fct=drc::LL.4(),...){
 
   colnames(data)[colnames(data)=='effect']='effect_2'
   if(conc!='CONC') colnames(data)[colnames(data)=='CONC']='CONC_2'
@@ -44,7 +43,7 @@ curve.fit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),...){
 #' Function where linear and several non-linear models are used to fit the curve of single drug effects using drm from the drc package.
 #'
 #' @param data Concentration-effect dataframe.
-#' @param resp Name of the column with the response values. Default is Net_growth.
+#' @param resp Name of the column with the response values. Default is Birth_rate.
 #' @param conc Name of the column with the drug concentration values.
 #' @param IC string for supplying the information criterion to be used. "AIC" and "BIC" are the two options. "AIC" by default.
 #' @param type a character string specifying the data type (parameter estimation will depend on the data type as different log likelihood function will be used).
@@ -62,7 +61,7 @@ curve.fit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),...){
 #' # use the compare argument of the function:
 #' best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",compare=T)
 #' }
-best.singlefit=function(data,resp="Net_growth",conc='CONC',type='continuous',IC='AIC',compare=F, ...){
+best.singlefit=function(data,resp="Birth_rate",conc='CONC',type='continuous',IC='AIC',compare=F, ...){
 
   if(conc!='CONC') colnames(data)[colnames(data)=='CONC']='CONC_2'
   colnames(data)[colnames(data)==conc]='CONC'
@@ -102,13 +101,13 @@ best.singlefit=function(data,resp="Net_growth",conc='CONC',type='continuous',IC=
 #' Function to fit linear models using lm function.
 #'
 #' @param data Concentration-effect dataframe.
-#' @param resp Name of the column with the response values. Default is Net_growth.
+#' @param resp Name of the column with the response values. Default is Birth_rate.
 #' @param conc Name of the column with the drug concentration values.
 #' @param ... Additional arguments for the lm function.
 #' @return This function returns the results of the model fitting function
 
 #' @export
-linear.fit=function(data,resp="Net_growth",conc="CONC",...){
+linear.fit=function(data,resp="Birth_rate",conc="CONC",...){
 
   colnames(data)[colnames(data)=='effect']='effect_2'
   if(conc!='CONC') colnames(data)[colnames(data)=='CONC']='CONC_2'
@@ -140,7 +139,7 @@ linear.fit=function(data,resp="Net_growth",conc="CONC",...){
 #' data(AU565_dataset) 
 #' #Fit the data with a 4 parameter log-logistic function:
 #' fit<-curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
-#' #To see the name of other nonlinear function write \code{drc::getMeanFunctions()}
+#' #To see the name of other nonlinear function write \code{\link[drc]{getMeanFunctions}}
 #' modelfit.plot(fit)
 #' modelfit.plot(fit,log.x=F)
 #' }
@@ -175,21 +174,32 @@ modelfit.plot=function(model, linear.model=F,log.x=F,linecol='firebrick'){
 #' Multiple concentration-response fit
 #'
 #' @param data Concentration-response dataframe.
-#' @param resp Response to be fitted (Y axis). Default is Net_growth.
+#' @param resp Response to be fitted (Y axis). Default is Birth_rate.
 #' @param conc Name of the column with the drug concentration values.
-#' @param fct nonlinear function. Currently available functions can be found in drc package (use drc::getMeanFunctions() for a full list).
+#' @param fct nonlinear function. Currently available functions can be found in drc package (use \code{\link[drc]{getMeanFunctions}} for a full list).
 #'  By default the four-parameter log-logistic model LL.4 is used. More examples include the three- and five-parameter log-logistic models LL.3, LL.5,the Weibull model W1.4, etc.
 #' @param linear.model logical value indicating whether the curve should be fitted using a linear model. If TRUE, the fct argument is ignored. FALSE by default.
-#' @param ... Additional arguments for the model fitting function. See ?drc::drm for more info.
+#' @param log.x logical. Logaritmically transform x axis values? FALSE by default.
+#' @param ... Additional arguments for the model fitting function. See \code{\link[drc]{drm}} for more info.
 #' @return This function returns the coefficient estimates of the fitted model and the corresponding plots for each cell line.
 #' @export
 #' @examples
 #' \dontrun{
-#' data(AU565_dataset) 
+#' #Effect of Alvocidib on the cell counts of BT-20 and MCF7 cell lines.
+#' 
+#' filename=system.file("extdata","2cell_lines.txt",package="ACESO")
+#' 
+#' growth_data=read.cellcount.data(filename,sep="\t")
+#' 
+#' #Calculate net growth rate assuming an exponential growth of the cells:
+#' growth_data<-net_growth_rate(growth_data)
+#' 
 #' #Fit the data with a 4 parameter log-logistic function:
-#' Multiple.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+#' Multiple.singlefit(growth_data,resp="Net_growth",conc="CONC",fct=drc::LL.4())
+#' 
+#' Multiple.singlefit(growth_data,resp="Net_growth",conc="CONC",fct=drc::LL.4(),log.x=T)
 #' }
-Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),linear.model=F,...){
+Multiple.singlefit=function(data,resp="Birth_rate",conc='CONC',fct=drc::LL.4(),linear.model=F,log.x=F,...){
 
   Type<-NULL
   Cell.line<-NULL
@@ -241,9 +251,15 @@ Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),l
       #Plot
       mml <- data.frame(CONC = seq(min(datacltype[,conc]), max(datacltype[,conc]), length.out = 1000))
       fit.ggplot=data.frame(y=predict(fit, newdata=mml),x=mml$CONC)
-      plot_fit[[l+1]]<-ggplot2::ggplot(data=fitdata[,c("CONC","effect")],ggplot2::aes(x=(CONC),y=effect))+ggplot2::geom_point(size=1.5)+
+      p<-ggplot2::ggplot(data=fitdata[,c("CONC","effect")],ggplot2::aes(x=(CONC),y=effect))+ggplot2::geom_point(size=1.5)+
         ggplot2::geom_line(data=fit.ggplot,ggplot2::aes(x=(x),y=(y)),size=1.3,col='firebrick')+ggplot2::xlab("Concentrations")+ggplot2::ylab(effect)+
         ggplot2::ggtitle(paste0(i,': ', 'Type ',j))+theme_minimal()+ theme(text = element_text(size=14))
+      
+      if(log.x){
+        p<-p+scale_x_continuous(trans="log")
+      } 
+      plot_fit[[l+1]]<-p
+      
       l=l+1
     }
   }
@@ -260,7 +276,7 @@ Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),l
 #'  Function where linear and several non-linear models are used to fit the curve of single drug effects on multiple cell lines at the same time.
 #'
 #' @param data Concentration-response dataframe.
-#' @param resp Response to be fitted (Y axis). Default is Net_growth.
+#' @param resp Response to be fitted (Y axis). Default is Birth_rate.
 #' @param conc Name of the column with the drug concentration values.
 #' @param IC string for supplying the information criterion to be used. "AIC" and "BIC" are the two options. "AIC" by default.
 #' @param type a character string specifying the data type (parameter estimation will depend on the data type as different log likelihood function will be used).
@@ -269,12 +285,19 @@ Multiple.singlefit=function(data,resp="Net_growth",conc='CONC',fct=drc::LL.4(),l
 #' @export
 #' @examples
 #' \dontrun{
-#' data(AU565_dataset) 
+#' #Effect of Alvocidib on the cell counts of BT-20 and MCF7 cell lines.
+#' 
+#' filename=system.file("extdata","2cell_lines.txt",package="ACESO")
+#' 
+#' growth_data=read.cellcount.data(filename,sep="\t")
+#' 
+#' #Calculate net growth rate assuming an exponential growth of the cells:
+#' growth_data<-net_growth_rate(growth_data)
+#' 
 #' #Fit the data with a 4 parameter log-logistic function:
-#' Multiple.best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC")
-#' # The best model is the 3 parameter log-logistic function. See ?drc::LL.3
+#' Multiple.best.singlefit(growth_data,resp="Net_growth",conc="CONC")
 #' }
-Multiple.best.singlefit=function(data,resp="Net_growth",conc='CONC',IC='AIC',type='continuous',...){
+Multiple.best.singlefit=function(data,resp="Birth_rate",conc='CONC',IC='AIC',type='continuous',...){
   #parameters=c()
  Type<-NULL
  Cell.line<-NULL
@@ -340,7 +363,7 @@ Multiple.best.singlefit=function(data,resp="Net_growth",conc='CONC',IC='AIC',typ
 #' @param nested logical. TRUE results in F tests between adjacent models (in 'fctList'). Only sensible for nested models.
 #' @param sorted character string determining according to which criterion the model fits are ranked.
 #' @param icfct function supplying the information criterion to be used. "AIC" and "BIC" are the two options. "AIC" by default.
-#' @param ... Additional arguments for the model fitting function. See ?drc::drm for more info.
+#' @param ... Additional arguments for the model fitting function. See \code{\link[drc]{drm}} for more info.
 #' @return This function compares different models using the following criteria: the log likelihood value, Akaike's or Bayes information criterion (AIC) or the estimated residual standard error.
 #' @export
 model.select=function (formula, data,fctList = NULL, type='continuous',nested = FALSE, sorted = c("IC","Res var", "Lack of fit", "no"), icfct = AIC,...)
@@ -384,7 +407,7 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
   if (!is.null(fctList)) {
     prevObj <- object
     for (i in 1:lenFL) {
-      tempObj <- try(update(object, fct = fctList[[i]]),  silent = TRUE)
+      tempObj <- try(stats::update(object, fct = fctList[[i]]),  silent = TRUE)
       fctList2[i + 1] <- fctList[[i]]$name
       if (!inherits(tempObj, "try-error")) {
         retMat[i + 1, 1] <- logLik(tempObj)

@@ -53,13 +53,14 @@ check_controls=function(dtdata,combination=F){
 #' Read the csv file where the cell viability assay data is gathered.
 #'
 #' @param filename name of the csv file. string.
+#' @param sep the field separator character. Comma by default.
 #' @param combination boolean argument to specify if the file has drug combination data, that is, more that one drug concentration column. Default to FALSE.
 #' @return A dataframe with the relevant information about the cell viability assay.
 #' @export
-read.cellcount.data=function(filename,combination=F){
+read.cellcount.data=function(filename,sep=",",combination=F){
   Cell_Count_0<-Viable.cells<-Time<-Cell.line<-Type<-Replicate<-NULL
   . <- "callate"
-  dataset=read.csv(filename,header=T,na='.')
+  dataset=read.csv(filename,header=T,na='.',sep=sep)
   if(length(setdiff(c('CONC', 'Viable.cells','Time'),colnames(dataset)))>0){
     missing=setdiff(c('CONC', 'Viable.cells','Time'),colnames(dataset))
     stop(paste("\n Column",missing,"is missing"))

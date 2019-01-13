@@ -66,6 +66,8 @@ $PKMODEL ncmt = 1, depot = FALSE
 $CAPTURE @annotated
 CP : Plasma concentration (mass/volume)'
 
+library(mrgsolve)
+
 #Read the code:
 cmt1_iv<- mcode("mymodel", code_iv)\%>\% Req(CP) 
 

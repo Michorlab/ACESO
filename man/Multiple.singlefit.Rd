@@ -4,22 +4,24 @@
 \alias{Multiple.singlefit}
 \title{Multiple.singlefit}
 \usage{
-Multiple.singlefit(data, resp = "Net_growth", conc = "CONC",
-  fct = drc::LL.4(), linear.model = F, ...)
+Multiple.singlefit(data, resp = "Birth_rate", conc = "CONC",
+  fct = drc::LL.4(), linear.model = F, log.x = F, ...)
 }
 \arguments{
 \item{data}{Concentration-response dataframe.}
 
-\item{resp}{Response to be fitted (Y axis). Default is Net_growth.}
+\item{resp}{Response to be fitted (Y axis). Default is Birth_rate.}
 
 \item{conc}{Name of the column with the drug concentration values.}
 
-\item{fct}{nonlinear function. Currently available functions can be found in drc package (use drc::getMeanFunctions() for a full list).
+\item{fct}{nonlinear function. Currently available functions can be found in drc package (use \code{\link[drc]{getMeanFunctions}} for a full list).
 By default the four-parameter log-logistic model LL.4 is used. More examples include the three- and five-parameter log-logistic models LL.3, LL.5,the Weibull model W1.4, etc.}
 
 \item{linear.model}{logical value indicating whether the curve should be fitted using a linear model. If TRUE, the fct argument is ignored. FALSE by default.}
 
-\item{...}{Additional arguments for the model fitting function. See ?drc::drm for more info.}
+\item{log.x}{logical. Logaritmically transform x axis values? FALSE by default.}
+
+\item{...}{Additional arguments for the model fitting function. See \code{\link[drc]{drm}} for more info.}
 }
 \value{
 This function returns the coefficient estimates of the fitted model and the corresponding plots for each cell line.
@@ -29,9 +31,19 @@ Multiple concentration-response fit
 }
 \examples{
 \dontrun{
-data(AU565_dataset) 
+#Effect of Alvocidib on the cell counts of BT-20 and MCF7 cell lines.
+
+filename=system.file("extdata","2cell_lines.txt",package="ACESO")
+
+growth_data=read.cellcount.data(filename,sep="\\t")
+
+#Calculate net growth rate assuming an exponential growth of the cells:
+growth_data<-net_growth_rate(growth_data)
+
 #Fit the data with a 4 parameter log-logistic function:
-Multiple.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
+Multiple.singlefit(growth_data,resp="Net_growth",conc="CONC",fct=drc::LL.4())
+
+Multiple.singlefit(growth_data,resp="Net_growth",conc="CONC",fct=drc::LL.4(),log.x=T)
 }
 }
 

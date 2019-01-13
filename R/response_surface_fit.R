@@ -15,7 +15,7 @@ NULL
 #' @param Drug1.name string to specify the name of drug 1.
 #' @param Drug2.name string to specify the name of drug 2.
 #' @param method array to specify if a generalized additive model (gam) or  a polynomial surface (loess) model must be fitted to the data.
-#' @return This function returns a fitted gam object (see ?gamObject for a detailed description) or an object of class "loess".
+#' @return This function returns a fitted gam object (see \code{\link[mgcv]{gamObject}} for a detailed description) or an object of class "loess".
 #' @export
 #' @examples 
 #' \dontrun{
@@ -63,7 +63,8 @@ resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Drug
 #' @param logscale determines whether the input variables will be plotted on a logarithmic scale, or a standard linear scale. Because this function is intended primarily for visualizing combined action dose-response, a logarithmic dose-pair space is the default.
 #' @param method array to specify if a generalized additive model (gam) or  a polynomial surface (loess) model must be fitted to the data.
 #' @param title title for the drug.
-#' @return This function returns a fitted gam object (see ?gamObject for a detailed description) or an object of class "loess".
+#' @return This function returns a fitted gam object (see \code{\link[mgcv]{gamObject}} for a detailed description) or an object of class "loess".
+#' @seealso \code{\link[mgcv]{gamObject}}
 #' @export
 #' @examples 
 #' \dontrun{

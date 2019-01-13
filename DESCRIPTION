@@ -8,12 +8,12 @@ Description: ACESO is a multiscale computational framework to explore
     optimum single-agent and combination treatment administration strategies for
     oncogene-driven cancers.
 Depends:
-    mrgsolve,
     R (>= 3.4.3)
 License: GPL (>= 2)
 Encoding: UTF-8
 Imports:
     drc,
+    mrgsolve,
     mgcv,
     data.table,
     gridExtra,

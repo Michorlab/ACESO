@@ -4,13 +4,13 @@
 \alias{Multiple.best.singlefit}
 \title{Multiple.best.singlefit}
 \usage{
-Multiple.best.singlefit(data, resp = "Net_growth", conc = "CONC",
+Multiple.best.singlefit(data, resp = "Birth_rate", conc = "CONC",
   IC = "AIC", type = "continuous", ...)
 }
 \arguments{
 \item{data}{Concentration-response dataframe.}
 
-\item{resp}{Response to be fitted (Y axis). Default is Net_growth.}
+\item{resp}{Response to be fitted (Y axis). Default is Birth_rate.}
 
 \item{conc}{Name of the column with the drug concentration values.}
 
@@ -28,10 +28,17 @@ Function where linear and several non-linear models are used to fit the curve of
 }
 \examples{
 \dontrun{
-data(AU565_dataset) 
+#Effect of Alvocidib on the cell counts of BT-20 and MCF7 cell lines.
+
+filename=system.file("extdata","2cell_lines.txt",package="ACESO")
+
+growth_data=read.cellcount.data(filename,sep="\\t")
+
+#Calculate net growth rate assuming an exponential growth of the cells:
+growth_data<-net_growth_rate(growth_data)
+
 #Fit the data with a 4 parameter log-logistic function:
-Multiple.best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC")
-# The best model is the 3 parameter log-logistic function. See ?drc::LL.3
+Multiple.best.singlefit(growth_data,resp="Net_growth",conc="CONC")
 }
 }
 

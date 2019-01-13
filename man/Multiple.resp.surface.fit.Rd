@@ -28,7 +28,7 @@ Multiple.resp.surface.fit(data, resp = "Birth_rate", conc1 = "CONC",
 \item{title}{title for the drug.}
 }
 \value{
-This function returns a fitted gam object (see ?gamObject for a detailed description) or an object of class "loess".
+This function returns a fitted gam object (see \code{\link[mgcv]{gamObject}} for a detailed description) or an object of class "loess".
 }
 \description{
 Fits a generalized additive model (gam) or  a polynomial surface (loess) to data of multiple cell lines.
@@ -40,5 +40,8 @@ gam.model=Multiple.resp.surface.fit(GD,resp='Birth_rate',conc1='CONC',conc2='CON
 title=", GAM with raw data")
 print(gam.model)
 }
+}
+\seealso{
+\code{\link[mgcv]{gamObject}}
 }
 

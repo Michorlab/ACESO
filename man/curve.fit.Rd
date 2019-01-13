@@ -4,20 +4,20 @@
 \alias{curve.fit}
 \title{curve.fit}
 \usage{
-curve.fit(data, resp = "Net_growth", conc = "CONC", fct = drc::LL.4(),
+curve.fit(data, resp = "Birth_rate", conc = "CONC", fct = drc::LL.4(),
   ...)
 }
 \arguments{
 \item{data}{Concentration-effect dataframe.}
 
-\item{resp}{Name of the column with the response values. Default is Net_growth.}
+\item{resp}{Name of the column with the response values. Default is "Birth_rate".}
 
-\item{conc}{Name of the column with the drug concentration values.}
+\item{conc}{Name of the column with the drug concentration values. Default to "CONC".}
 
-\item{fct}{nonlinear function. Currently available functions can be found in drc package (use drc::getMeanFunctions() for a full list).
+\item{fct}{nonlinear function. Currently available functions can be found in drc package (use \code{\link[drc]{getMeanFunctions}} for a full list).
 By default the four-parameter log-logistic model LL.4 is used. More examples include the three- and five-parameter log-logistic models LL.3, LL.5,the Weibull model W1.4, etc.}
 
-\item{...}{Additional arguments for the model fitting function. See ?drc::drm for more info.}
+\item{...}{Additional arguments for the model fitting function. See \code{\link[drc]{drm}}for more info.}
 }
 \value{
 This function returns the results of the model fitting function
@@ -30,7 +30,6 @@ A general model fitting function for single drug effects using drm from the drc 
 data(AU565_dataset) 
 #Fit the data with a 4 parameter log-logistic function:
 curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
-#To see the name of other nonlinear function write \\code{drc::getMeanFunctions()}
 }
 }
 

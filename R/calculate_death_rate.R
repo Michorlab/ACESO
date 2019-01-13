@@ -5,13 +5,14 @@
 #' Read the csv file where the apoptosis assay data is saved.
 #'
 #' @param filename name of the csv file. string.
+#' @param sep the field separator character. Comma by default.
 #' @param combination boolean argument to specify if the file has drug combination data, that is, more that one drug concentration column. Default to FALSE.
 #' @param column.name string value to specify the column name where the total number or the fraction of death cells numbers are saved.
 #' @return A dataframe with the relevant information about the cell viability assay.
 #' @export
-read.celldeath.file=function(filename,combination=F,column.name="Apoptotic.fraction"){
+read.celldeath.file=function(filename,sep=",",combination=F,column.name="Apoptotic.fraction"){
   Apoptosis_time0<-Apoptotic.fraction<-Time<-Cell.line<-Type<-Replicate<-NULL
-  cell_death_data=read.csv(filename,header = T, na='.')
+  cell_death_data=read.csv(filename,header = T, na='.',sep=sep)
   "."<-"callate"
   #Apoptotic.fraction: Annexin.Vplus: sum of early and late apoptotic cells (V+/Pi- + V+/Pi+)
   if(length(setdiff(c('CONC', column.name,'Time'),colnames(cell_death_data)))>0){

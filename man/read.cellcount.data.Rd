@@ -4,10 +4,12 @@
 \alias{read.cellcount.data}
 \title{read.cellcount.data}
 \usage{
-read.cellcount.data(filename, combination = F)
+read.cellcount.data(filename, sep = ",", combination = F)
 }
 \arguments{
 \item{filename}{name of the csv file. string.}
+
+\item{sep}{the field separator character. Comma by default.}
 
 \item{combination}{boolean argument to specify if the file has drug combination data, that is, more that one drug concentration column. Default to FALSE.}
 }

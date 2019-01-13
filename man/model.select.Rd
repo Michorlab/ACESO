@@ -23,7 +23,7 @@ model.select(formula, data, fctList = NULL, type = "continuous",
 
 \item{icfct}{function supplying the information criterion to be used. "AIC" and "BIC" are the two options. "AIC" by default.}
 
-\item{...}{Additional arguments for the model fitting function. See ?drc::drm for more info.}
+\item{...}{Additional arguments for the model fitting function. See \code{\link[drc]{drm}} for more info.}
 }
 \value{
 This function compares different models using the following criteria: the log likelihood value, Akaike's or Bayes information criterion (AIC) or the estimated residual standard error.

@@ -4,11 +4,13 @@
 \alias{read.celldeath.file}
 \title{read.celldeath.file}
 \usage{
-read.celldeath.file(filename, combination = F,
+read.celldeath.file(filename, sep = ",", combination = F,
   column.name = "Apoptotic.fraction")
 }
 \arguments{
 \item{filename}{name of the csv file. string.}
+
+\item{sep}{the field separator character. Comma by default.}
 
 \item{combination}{boolean argument to specify if the file has drug combination data, that is, more that one drug concentration column. Default to FALSE.}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/PK.R
 \name{easy.mrgsim}
 \alias{easy.mrgsim}
-\title{easy.mrgsim}
+\title{Simulate from a model object}
 \usage{
 easy.mrgsim(model, dosing_schedule = NULL, parameters = NULL,
   variability = NULL, precision = 0.1, tend, scale = 1,
@@ -58,6 +58,8 @@ $PKMODEL ncmt = 1, depot = FALSE
 
 $CAPTURE @annotated
 CP : Plasma concentration (mass/volume)'
+
+library(mrgsolve)
 
 #Read the code:
 cmt1_iv<- mcode("mymodel", code_iv)\%>\% Req(CP) 
