@@ -1,0 +1,180 @@
+---
+title: "Complex dosing schedules"
+author: "Itziar Irurzun Arana"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Complex dosing schedules}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+We are going to simulate complex dosing schedules using mrgsolve and ACESO packages. 
+
+```{r}
+#' Load libraries
+library(ACESO)
+library(mrgsolve)
+```
+
+## Pharmacokinetic model
+
+1 compartment model, no depot, parameters: CL and V
+
+```{r}
+code_iiv <- '$PARAM @annotated
+TVCL   :  171.36 : Clearance (volume/time)
+TVV    : 153.547 : Central volume (volume)
+
+$CMT  @annotated
+CENT : Central compartment
+
+$MAIN
+double CL = exp(log(TVCL) + ETA1);
+double V = exp(log(TVV)  + ETA2);
+
+$OMEGA @labels ETA1 ETA2
+0 0
+
+$GLOBAL
+#define CP (CENT/V)
+
+$PKMODEL ncmt = 1, depot = FALSE
+
+$CAPTURE @annotated
+CP : Plasma concentration (mass/volume)'
+```
+
+Read the model:
+```{r}
+ cmt1_iv<- mcode("mymodel", code_iiv)%>% Req(CP) 
+```
+## Event objects in mrgsolve
+#### First dosing schedule: 150mg dose at time 0, once every day in a week
+
+
+```{r}
+e1 <- ev(amt = 150, ii = 1, addl = 6, time=0)
+e1
+```
+* amt: amount of administered dose 
+* ii: time interval between doses
+* addl: additional doses
+* time: time of first dose
+* cmt: compartment number (in which compartment a dosing is ocurring)
+* evid: type of record (1: defines the record as a dose event)
+
+#### Simulate 
+Simulate the model with easy.mrgsim function (extended version of mrgsim function in mrgsolve package)
+
+* model: model name
+* dosing_schedule: event object where the dosing schedule is specified
+* tend: final time
+* delta: the increment of time to simulate a sequence from 0 to tend.
+```{r}
+easy.mrgsim(model=cmt1_iv,dosing_schedule=e1,delta=0.1,tend=7) %>% plot
+```
+
+#### 1 week of holiday between each treatment period:
+
+```{r}
+e2 <- seq(e1, wait = 7, e1, wait = 7)
+e2
+easy.mrgsim(model=cmt1_iv,dosing_schedule=e2,delta=0.1,tend=7*4) %>% plot
+```
+
+
+
+#### A alternating dosing sequence: 150 mg daily for a week, then 50 mg daily for a week etc.
+```{r}
+e3 <- ev(amt = 50, ii = 1, addl = 6)
+e4 <- seq(e1, e3, e1)
+e4
+easy.mrgsim(model=cmt1_iv,dosing_schedule=e4,delta=0.1,tend=7*3) %>% plot
+
+```
+
+#### A cycle of 3 weeks on, one week off for two months
+```{r}
+e5 <- ev(amt = 150, ii = 1, addl = (3*7)-1)
+e6 <- seq(e5, wait = 7, e5)
+easy.mrgsim(model=cmt1_iv,dosing_schedule=e6,delta=0.1,tend=7*4*2) %>% plot
+```
+
+#### Load + maintenance doses
+```{r}
+#High dose: 1600mg once every week
+load<- ev(amt = 1600, ii = 7, addl = 0, time=0)
+#Low dose: 50mg once every day, after the high dose
+maintenance<- ev(amt = 50, ii = 1, addl = 5,time=1)
+easy.mrgsim(model=cmt1_iv,dosing_schedule=load+maintenance,delta=0.1,tend=7) %>% plot
+```
+
+#### Repeat this for one month period
+```{r}
+load_maint <- ev_rep(load+maintenance, n=4)
+head(load_maint)
+easy.mrgsim(model=cmt1_iv,data=load_maint,delta=0.1,tend=7*4) %>% plot
+```
+
+### Simulate several individuals
+To simulate different individuals we need to introduce variability into the pk parameters. To this end, a variance-covariance matrix needs to be defined.
+Let's simulate 5 individuals, with 0.1 variance for the clearance (CL) and 0.2 variance for the volume of distribution (V).  
+```{r}
+Nindividuals=5
+easy.mrgsim(model=cmt1_iv,dosing_schedule=load+maintenance,delta=0.1,tend=7,
+            variability = dmat(0.1, 0.2),nid=Nindividuals) %>% plot
+
+```
+
+### Plot with ggplot2
+You prefer plotting with ggplot2? Just save the results as a data.frame
+```{r}
+pk<-as.data.frame(easy.mrgsim(model=cmt1_iv,dosing_schedule=load+maintenance,delta=0.1,tend=7,
+                              variability = dmat(0.1, 0.2),nid=Nindividuals) )
+head(pk)
+
+library(ggplot2)
+ggplot(data=pk,aes(x=time,y=CP,col=as.factor(ID)))+geom_line(size=1.3)
+```
+
+## IV infusion
+For drug administration by infusion, or any zero-order input models, the rate of drug
+administration may be defined using the rate argument. 
+```{r}
+inf <- ev(amt = 150, time=0, rate=48)
+easy.mrgsim(model=cmt1_iv,dosing_schedule =inf,delta=0.1,tend=7*2) %>% plot
+```
+
+## Oral administration
+Now we are going to simulate a one compartment model with extravascular administration. In this case, we are going to select a model from the model libraries already included in ACES instead of writing all the code by ourselves:
+```{r}
+model_library(list=T)
+
+cmt1_oral <- mread("1cmt_ev", model_library()) %>% Req(CP) 
+
+oral1 <- ev(amt = 150, time=0)
+
+easy.mrgsim(model=cmt1_oral,dosing_schedule=oral1,delta=0.1,tend=7) %>% plot
+
+oral2 <- ev(amt = 150, ii=1, addl=6, time=0)
+
+easy.mrgsim(model=cmt1_oral,dosing_schedule=oral2,delta=0.1,tend=7*3) %>% plot
+
+```
+
+Introduce a lag time of 2 days
+```{r}
+#See the parameters of the model
+param(cmt1_oral)
+#The parameter associated with the lag time is ALAG
+easy.mrgsim(model=cmt1_oral,dosing_schedule=oral1,delta=0.1,tend=7*3,parameters=list(ALAG=2)) %>% plot
+
+```

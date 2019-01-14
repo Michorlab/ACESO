@@ -7,6 +7,7 @@ Description: ACESO is a multiscale computational framework to explore
     pharmacokinetic and drug interaction effects into account to rationally identify
     optimum single-agent and combination treatment administration strategies for
     oncogene-driven cancers.
+Maintainer: Itziar Irurzun-Arana <itzirurzun@gmail.com>
 Depends:
     R (>= 3.4.3)
 License: GPL (>= 2)
@@ -26,3 +27,6 @@ Imports:
     utils
 LazyData: true
 RoxygenNote: 5.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
