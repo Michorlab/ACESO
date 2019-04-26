@@ -61,11 +61,11 @@ read.celldeath.file=function(filename,sep=",",combination=F,column.name="Apoptot
 #' @param net_growth_data name of the dataframe where the growth kinetics data is saved.
 #' @param d_start initial parameter value for the death rate to be used in the least squared estimation process.
 #' @param column.name string value to specify the column name where the total number or the fraction of death cells numbers are saved.
-#' @param Apoptotic.fraction if TRUE, the fraction of death cells is used for the calculation of the death rate. If FALSE, the total number of death cells is used.
+#' @param Apoptotic.fraction if TRUE, the fraction of death cells is used for the calculation of the death rate. If FALSE (default), the total number of death cells is used.
 #' @param ... Additional arguments for nls function
 #' @return A dataframe where the death rate for each cell type is included as a column to the information used as input.
 #' @export
-calculate_death_rate=function(cell_death_data,net_growth_data=NULL,d_start=0.005,Apoptotic.fraction=T,column.name="Apoptotic.fraction",...){
+calculate_death_rate=function(cell_death_data,net_growth_data=NULL,d_start=0.005,Apoptotic.fraction=F,column.name="Apoptotic.cells",...){
   . <- "callate"
   Birth_rate<- Death_rate<-Cell.line<-Type <-NULL
   if(!is.null(net_growth_data)) cell_death_data=merge(cell_death_data,net_growth_data)

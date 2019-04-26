@@ -72,7 +72,7 @@ best.singlefit=function(data,resp="Birth_rate",conc='CONC',type='continuous',IC=
 
   if(!all(is.na(eval(parse(text=paste0('data$',resp)))))){
 
-    M1=suppressWarnings(model.select(eval(parse(text=formu)),data=data, list(drc::LL.4(),drc::L.3(),drc::L.4(),drc::L.5(),drc::LL.2(),drc::LL.3(), drc::LL.5(), drc::W1.2(), drc::W1.3(), drc::W1.4(), drc::W2.4(), drc::EXD.2(),drc::EXD.3(),drc::G.2(),drc::G.3(),drc::G.4(), drc::baro5(),drc::LN.3(),drc::LN.4()),type=type,icfct=icfct,...))
+    M1=suppressWarnings(model.select(eval(parse(text=formu)),data=data, list(drc::LL.4(),drc::L.3(),drc::L.4(),drc::L.5(),drc::LL.2(),drc::LL.3(), drc::LL.5(), drc::W1.2(), drc::W1.3(), drc::W1.4(), drc::W2.4(), drc::EXD.2(),drc::EXD.3(),drc::G.2(),drc::G.3(),drc::G.4(), drc::LN.3(),drc::LN.4()),type=type,icfct=icfct,...))
     #linear model
     L1=eval(parse(text=paste0('lm(',formu, ',data=data)')))
     ic=AIC(L1)
