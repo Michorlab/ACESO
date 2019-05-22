@@ -43,7 +43,8 @@ read.PKdata=function(file){
 #' @param missing_times numeric vector to indicate the times where the patient missed some of the doses specified in the dosing_schedule argument.
 #' @param output.time vector of times to interpolate 
 #' @param output.conc vector of drug concentrations to interpolate
-#' @param scale scaling parameter
+#' @param scale scaling parameter for y axis
+#' @param scale.x scaling parameter for x axis
 #' @param ... additional arguments for the mrgsim function from mrgsolve package
 #' @return This function returns an interpolation of PK data or a simulated PK model 
 
@@ -91,7 +92,7 @@ read.PKdata=function(file){
 #' pk=pk.function(model=cmt1_iv,dosing_schedule=e1,tend=30,parameters = newpar)
 #'
 #'}
-pk.function=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL,tend,delta=0.00005,pk.function=NULL,missing_times=NULL,output.time=NULL,output.conc=NULL,scale=1,...){
+pk.function=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL,tend,delta=0.00005,pk.function=NULL,missing_times=NULL,output.time=NULL,output.conc=NULL,scale=1,scale.x=1,...){
   if(!is.null(output.time)){
    if(!is.numeric(output.time) | !is.numeric(output.conc)) stop('output.time and output.conc must have numeric values')
     pk <- approxfun(output.time, output.conc)
@@ -113,6 +114,7 @@ pk.function=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL
     }
     out <-(mrgsim(model,events = dosing_schedule,end = tend,delta=delta,...))
     out@data$CP=out$CP*scale
+    out@data$time=out$time*scale.x
     pk <- approxfun(out$time, out$CP)
   }
 
@@ -143,7 +145,8 @@ mrgsolve.function=function(model,dosing_schedule,tend,parameters=NULL,variabilit
 #' @param tend Final time for the simulation of the PK model.
 #' @param precision number: increment of the sequence to simulate from 0 to tend.
 #' @param missing_times numeric vector to indicate the times where the patient missed some of the doses specified in the dosing_schedule argument.
-#' @param scale scaling parameter
+#' @param scale scaling parameter for y axis
+#' @param scale.x scaling parameter for x axis
 #' @param ... additional arguments for the mrgsim function from mrgsolve package
 #' @return This function computes predictions of PK models following mrgsolve model specifications.
 #' @export
@@ -200,7 +203,7 @@ mrgsolve.function=function(model,dosing_schedule,tend,parameters=NULL,variabilit
 #' Simulation2<-as.data.frame(
 #' easy.mrgsim(model=cmt1_iv,dosing_schedule=d2,tend=45,delta=0.1,parameters = newpar))
 #'}
-easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL,precision=0.1,tend,scale=1,missing_times=NULL,...){
+easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL,precision=0.1,tend,scale=1,scale.x=1,missing_times=NULL,...){
   if(!is.null(parameters)){
     model <- param(model, parameters)
   }
@@ -216,6 +219,7 @@ easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL
   }
   out <-(mrgsim(model,events = dosing_schedule,end = tend,delta=precision,...))
   out@data$CP=out$CP*scale
+  out@data$time=out$time*scale.x
   return(out)
 }
 
@@ -247,24 +251,29 @@ easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL
 #' 
 #' }
 
-Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,log.yaxis=F,weighted=F){
+Estimate.PK=function(PK_data,x.name="time",y.name="CONC",model,initial_estimates,log.yaxis=F,weighted=F){
  CP<-NULL
  CONC<-NULL
+ 
+ if(y.name!='CONC') colnames(PK_data)[colnames(PK_data)=='CONC']='CONC_2'
+ colnames(PK_data)[colnames(PK_data)==y.name]='CONC'
+ 
+ colnames(PK_data)[colnames(PK_data)==x.name]='time'
 
   # nonlinear least squares
-  nls_pred <- function(p, .mod, .data,.yobs,pred = FALSE){
+  nls_pred <- function(p, .mod, .data,.yobs){
    # .data <- cbind(.data,exp(p))
      p <- lapply(p,exp)
     .mod <- mrgsolve::update(.mod, param=p)
     out <- mrgsim(.mod, data = .data, obsonly = TRUE)
-    if(pred) return(as.data.frame(out))
+    #if(pred) return(as.data.frame(out))
     return( out$CP)
   }
 
   obj=nls_pred
   obs  <- PK_data[PK_data$evid==0,]
   dose <- PK_data[PK_data$evid==1,]
-  yobs <- obs[,DV]
+  yobs <- obs[,"CONC"]
   if(!weighted){
     weighted=rep(1,length(yobs))
   }
@@ -283,8 +292,9 @@ Estimate.PK=function(PK_data,DV="CONC",model,initial_estimates,log.yaxis=F,weigh
   est=(coef(fit))
   result=fit
  
-  model=mrgsolve::update(model,end=max(PK_data$time), delta=0.5)
-  pred <-as.data.frame(obj(est,model,PK_data,yobs,pred=TRUE))
+ 
+  model=mrgsolve::update(model,param=exp(est),end=max(PK_data$time), delta=0.5)
+  pred <-as.data.frame(mrgsolve::mrgsim(model,data=PK_data[PK_data$amt!=0,],end=max(PK_data$time)))
 
 
   p<-ggplot() +

@@ -11,7 +11,7 @@ dr.function=function(model,CONC,CONC2=NULL){ #TODO: ampliar para combinaciones c
     pm <-t(as.matrix(model$coefficients))
     dr_predict=model$fct$fct(CONC,pm)
     #if(model$dataList$names$orName!='Net_growth'){ #Para eliminar valores negativos, pero en caso de Net_growth puedo tener valores negativos
-    dr_predict=HeavisideStep.f(dr_predict)
+    #dr_predict=HeavisideStep.f(dr_predict)
     #}
   }else if(inherits(model, "gam")){ #GAM model
     dr_predict=predict.gam.simplified(object=model,newdata=data.frame(CONC=CONC,CONC2=CONC2))
@@ -22,9 +22,9 @@ dr.function=function(model,CONC,CONC2=NULL){ #TODO: ampliar para combinaciones c
     }else{
       dr_predict=predict(model,newdata=data.frame(CONC=CONC,CONC2=CONC2))
     }
-
-    dr_predict=HeavisideStep.f(dr_predict) #TODO: no eliminar valores negativos en net_growth
+    
   }
+  dr_predict=HeavisideStep.f(dr_predict) #TODO: no eliminar valores negativos en net_growth
   return(dr_predict)
 }
 

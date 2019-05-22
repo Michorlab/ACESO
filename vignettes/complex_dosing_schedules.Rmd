@@ -154,7 +154,7 @@ easy.mrgsim(model=cmt1_iv,dosing_schedule =inf,delta=0.1,tend=7*2) %>% plot
 ```
 
 ## Oral administration
-Now we are going to simulate a one compartment model with extravascular administration. In this case, we are going to select a model from the model libraries already included in ACES instead of writing all the code by ourselves:
+Now we are going to simulate a one compartment model with extravascular administration. In this case, we are going to select a model from the model libraries already included in ACESO instead of writing all the code by ourselves:
 ```{r}
 model_library(list=T)
 

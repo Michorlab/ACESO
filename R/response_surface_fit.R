@@ -110,7 +110,7 @@ Multiple.resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CO
       rmap <<- braidReports::responseMap(predict~CONC+CONC2,GD,logscale=logscale)
       p=ResponseSurface.plot(rmap=rmap,xl=Drug1.name,yl=Drug2.name,zl=resp)
 
-      plot_fit[[l+1]]<-p+ ggplot2::ggtitle(paste(i,':', 'Type',j,title))+theme_minimal()
+      plot_fit[[l+1]]<-p+ ggplot2::ggtitle(paste(i,':', 'Type',j,title))+theme_minimal()+theme(text = element_text(size=12))
       l=l+1
     }
   }
