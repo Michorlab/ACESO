@@ -156,6 +156,7 @@ Loewe<-function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',same.Emax=F,Em
   
   GD$loewe_additivity=as.vector(t(loewe.mat))
   data=merge(data,GD)
+  data=data[order(data[,conc1],data[,conc2]),]
   return(data)
 }
 

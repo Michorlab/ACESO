@@ -46,6 +46,7 @@ HSA<-function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Emax.effect=c('m
 
   GD$HSA_response=as.vector(t(ref.mat))
   data=merge(data,GD)
+  data=data[order(data[,conc1],data[,conc2]),]
   return(data)
 
 }
