@@ -4,8 +4,8 @@
 \alias{curve.fit}
 \title{curve.fit}
 \usage{
-curve.fit(data, resp = "Birth_rate", conc = "CONC", fct = drc::LL.4(),
-  ...)
+curve.fit(data, resp = "Birth_rate", conc = "CONC",
+  fct = drc::LL.4(), ...)
 }
 \arguments{
 \item{data}{Concentration-effect dataframe.}
@@ -32,4 +32,3 @@ data(AU565_dataset)
 curve.fit(AU565_dataset,resp="Viable.cells",conc="CONC",fct=drc::LL.4())
 }
 }
-

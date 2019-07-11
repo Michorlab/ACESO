@@ -27,4 +27,3 @@ Define Type 0 cells: sensitive cell lines
 \examples{
 define.Type0.cells(N0=1,birth_rate = 0.001,death_rate  = 0.005)
 }
-

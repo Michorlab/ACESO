@@ -36,4 +36,3 @@ gam.model=resp.surface.fit(GD,resp='Birth_rate',conc1='CONC',conc2='CONC2')
 print(gam.model)
 }
 }
-

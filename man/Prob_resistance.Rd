@@ -43,4 +43,3 @@ Probability of resistance at time t
  }
 
 }
-

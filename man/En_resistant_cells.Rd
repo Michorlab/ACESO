@@ -4,7 +4,8 @@
 \alias{En_resistant_cells}
 \title{En_resistant_cells}
 \usage{
-En_resistant_cells(N, t, type_0, type_i, type_icr = NULL, approximation = T)
+En_resistant_cells(N, t, type_0, type_i, type_icr = NULL,
+  approximation = T)
 }
 \arguments{
 \item{N}{Number of different resistant cell types}
@@ -44,4 +45,3 @@ En_resistant_cells(N=2,t=100,type_0=Type0,type_i=list(Type1,Type2))
 }
 
 }
-

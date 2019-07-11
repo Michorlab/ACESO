@@ -19,4 +19,3 @@ A dataframe with the relevant information about the cell viability assay.
 \description{
 Read the csv file where the cell viability assay data is gathered.
 }
-

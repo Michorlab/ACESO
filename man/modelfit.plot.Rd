@@ -4,7 +4,8 @@
 \alias{modelfit.plot}
 \title{modelfit.plot}
 \usage{
-modelfit.plot(model, linear.model = F, log.x = F, linecol = "firebrick")
+modelfit.plot(model, linear.model = F, log.x = F,
+  linecol = "firebrick")
 }
 \arguments{
 \item{model}{a model object for which prediction is desired.}
@@ -31,4 +32,3 @@ modelfit.plot(fit)
 modelfit.plot(fit,log.x=F)
 }
 }
-

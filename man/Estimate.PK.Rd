@@ -4,13 +4,15 @@
 \alias{Estimate.PK}
 \title{Estimate.PK}
 \usage{
-Estimate.PK(PK_data, DV = "CONC", model, initial_estimates, log.yaxis = F,
-  weighted = F)
+Estimate.PK(PK_data, x.name = "time", y.name = "CONC", model,
+  initial_estimates, log.yaxis = F, weighted = F)
 }
 \arguments{
 \item{PK_data}{Data to fit (drug concentrations over time)}
 
-\item{DV}{Column name of the dependent variable (drug concentrations). "CONC" by default.}
+\item{x.name}{Column name of the independent variable (time) in the x axis. "time" by default.}
+
+\item{y.name}{Column name of the dependent variable (drug concentrations) in the y axis. "CONC" by default.}
 
 \item{model}{Structural PK model definition (mrgsolve model specification).}
 
@@ -38,4 +40,3 @@ param(cmt1_oral)
 
 }
 }
-

@@ -5,8 +5,8 @@
 \title{calculate_death_rate}
 \usage{
 calculate_death_rate(cell_death_data, net_growth_data = NULL,
-  d_start = 0.005, Apoptotic.fraction = T,
-  column.name = "Apoptotic.fraction", ...)
+  d_start = 0.005, Apoptotic.fraction = F,
+  column.name = "Apoptotic.cells", ...)
 }
 \arguments{
 \item{cell_death_data}{name of the dataframe where the apoptosis assay data is saved.}
@@ -15,7 +15,7 @@ calculate_death_rate(cell_death_data, net_growth_data = NULL,
 
 \item{d_start}{initial parameter value for the death rate to be used in the least squared estimation process.}
 
-\item{Apoptotic.fraction}{if TRUE, the fraction of death cells is used for the calculation of the death rate. If FALSE, the total number of death cells is used.}
+\item{Apoptotic.fraction}{if TRUE, the fraction of death cells is used for the calculation of the death rate. If FALSE (default), the total number of death cells is used.}
 
 \item{column.name}{string value to specify the column name where the total number or the fraction of death cells numbers are saved.}
 
@@ -27,4 +27,3 @@ A dataframe where the death rate for each cell type is included as a column to t
 \description{
 Function to calculate the death rate from the apoptosis assay data.
 }
-

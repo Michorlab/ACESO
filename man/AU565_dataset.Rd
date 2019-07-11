@@ -27,4 +27,3 @@ The data consists of a dataframe named GD with the following columns:
 }
 }
 \keyword{datasets}
-

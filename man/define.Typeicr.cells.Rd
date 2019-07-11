@@ -30,4 +30,3 @@ Define Type icr cells: cross-resistant cell line
 define.Typeicr.cells(Ni_0=0,birth_rate = 0.001,death_rate  = 0.005,mutation_rate=0.0001)
 
 }
-

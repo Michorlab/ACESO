@@ -21,4 +21,3 @@ This function returns the results of the model fitting function
 \description{
 Function to fit linear models using lm function.
 }
-

@@ -37,4 +37,3 @@ The data consists of a dataframe named Dactolisib_Trametinib_combination with th
 }
 }
 \keyword{datasets}
-

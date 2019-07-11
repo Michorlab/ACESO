@@ -15,4 +15,3 @@ A data.frame with the pharmacokinetic data
 \description{
 Read the pharmacokinetic data
 }
-

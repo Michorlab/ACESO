@@ -4,7 +4,8 @@
 \alias{En_crossresistant_cells_i}
 \title{En_crossresistant_cells_i}
 \usage{
-En_crossresistant_cells_i(t, type_icr, type_0, type_i, i, approximation = T)
+En_crossresistant_cells_i(t, type_icr, type_0, type_i, i,
+  approximation = T)
 }
 \arguments{
 \item{t}{Final time}
@@ -25,4 +26,3 @@ En_crossresistant_cells_i returns the number of cross-resistant cells that arise
 \description{
 Expected number of cross-resistant cells arising from resistant clone i at time t after treatment initiation
 }
-

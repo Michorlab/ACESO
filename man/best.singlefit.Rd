@@ -39,4 +39,3 @@ best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC")
 best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",compare=T)
 }
 }
-

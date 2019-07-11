@@ -2,7 +2,10 @@
 title: "Complex dosing schedules"
 author: "Itziar Irurzun Arana"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:  
+  prettydoc::html_pretty:
+    theme: cayman 
+    highlight: github
 vignette: >
   %\VignetteIndexEntry{Complex dosing schedules}
   %\VignetteEngine{knitr::rmarkdown}
@@ -12,7 +15,8 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  warnings= FALSE
 )
 ```
 
@@ -22,39 +26,33 @@ We are going to simulate complex dosing schedules using mrgsolve and ACESO packa
 #' Load libraries
 library(ACESO)
 library(mrgsolve)
+#install mrgsolve from github: devtools::install_github("metrumresearchgroup/mrgsolve")
 ```
 
 ## Pharmacokinetic model
 
-1 compartment model, no depot, parameters: CL and V
+We are going to simulate a one compartment model with intravenous administration.
 
+Read the model from the model libraries included in ACESO:
 ```{r}
-code_iiv <- '$PARAM @annotated
-TVCL   :  171.36 : Clearance (volume/time)
-TVV    : 153.547 : Central volume (volume)
+model_library(list=T)
 
-$CMT  @annotated
-CENT : Central compartment
-
-$MAIN
-double CL = exp(log(TVCL) + ETA1);
-double V = exp(log(TVV)  + ETA2);
-
-$OMEGA @labels ETA1 ETA2
-0 0
-
-$GLOBAL
-#define CP (CENT/V)
-
-$PKMODEL ncmt = 1, depot = FALSE
-
-$CAPTURE @annotated
-CP : Plasma concentration (mass/volume)'
+cmt1_iv <- mread("1cmt_iv", model_library()) %>% Req(CP)
+#See the code of the model
+see(cmt1_iv)
 ```
-
-Read the model:
+See the parameters of the model with the default values:
 ```{r}
- cmt1_iv<- mcode("mymodel", code_iiv)%>% Req(CP) 
+param(cmt1_iv)
+```
+We are going to change the default parameter values for TVCL (typical value for the CLearance) and TVV (Typical value for the Volume of distribution):
+
+```{r}
+newpar <-  list('TVCL' = 171.4, #L/h
+          'TVV'  = 153.5) 
+cmt1_iv<-param(cmt1_iv,newpar)
+
+param(cmt1_iv)
 ```
 ## Event objects in mrgsolve
 #### First dosing schedule: 150mg dose at time 0, once every day in a week
@@ -154,7 +152,7 @@ easy.mrgsim(model=cmt1_iv,dosing_schedule =inf,delta=0.1,tend=7*2) %>% plot
 ```
 
 ## Oral administration
-Now we are going to simulate a one compartment model with extravascular administration. In this case, we are going to select a model from the model libraries already included in ACESO instead of writing all the code by ourselves:
+Now we are going to simulate a one compartment model with extravascular administration. We first select a model from the model libraries already included in ACESO instead of writing all the code by ourselves:
 ```{r}
 model_library(list=T)
 

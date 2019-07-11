@@ -19,4 +19,3 @@ Pext_preexisting_resist function returns the probability of extinction (between 
 \description{
 Probability of extinction at time t of a resistant cell type when there is pre-existing resistance at treatment initiation
 }
-

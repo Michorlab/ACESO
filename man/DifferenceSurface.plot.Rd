@@ -50,4 +50,3 @@ mid="yellow",low="hotpink1",high="darkturquoise")
 \seealso{
 braidReports::responseMap
 }
-

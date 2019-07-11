@@ -4,8 +4,8 @@
 \alias{Pext}
 \title{Pext}
 \usage{
-Pext(t, Text, type_i, i, approximation = T, int.function = c("integrate",
-  "pracma"))
+Pext(t, Text, type_i, i, approximation = T,
+  int.function = c("integrate", "pracma"))
 }
 \arguments{
 \item{t}{time of production of a resistant cell clone}
@@ -26,4 +26,3 @@ Pext function returns the probability of extinction (between 0 and 1) at time T 
 \description{
 Probability of extinction at time Text of a single resistant cell produced at time t
 }
-

@@ -21,4 +21,3 @@ The data consists of a dataframe named PK.example where the plasma drug concentr
 }
 }
 \keyword{datasets}
-

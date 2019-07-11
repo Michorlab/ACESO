@@ -6,7 +6,7 @@
 \usage{
 easy.mrgsim(model, dosing_schedule = NULL, parameters = NULL,
   variability = NULL, precision = 0.1, tend, scale = 1,
-  missing_times = NULL, ...)
+  scale.x = 1, missing_times = NULL, ...)
 }
 \arguments{
 \item{model}{Structural PK model definition (mrgsolve model specification)}
@@ -21,7 +21,9 @@ easy.mrgsim(model, dosing_schedule = NULL, parameters = NULL,
 
 \item{tend}{Final time for the simulation of the PK model.}
 
-\item{scale}{scaling parameter}
+\item{scale}{scaling parameter for y axis}
+
+\item{scale.x}{scaling parameter for x axis}
 
 \item{missing_times}{numeric vector to indicate the times where the patient missed some of the doses specified in the dosing_schedule argument.}
 
@@ -87,4 +89,3 @@ Simulation2<-as.data.frame(
 easy.mrgsim(model=cmt1_iv,dosing_schedule=d2,tend=45,delta=0.1,parameters = newpar))
 }
 }
-

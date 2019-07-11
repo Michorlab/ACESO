@@ -1,11 +1,7 @@
 Package: ACESO
 Title: A Cancer Evolution Simulation Optimizer
 Version: 0.0.0.9000
-Authors@R: c(person("Itziar", "Irurzun-Arana", email = "itzirurzun@gmail.com", role = c("aut", "cre")),
-person("Ollie", "McDonald", 
-      role = "aut", email = "mcdonald@jimmy.harvard.edu"),
-person("Franziska", "Michor", 
-      role = "aut", email = "michor@jimmy.harvard.edu"))
+Authors@R: person("Itziar", "Irurzun-Arana", email = "itzirurzun@gmail.com", role = c("aut", "cre"))
 Description: ACESO is a multiscale computational framework to explore
     the evolutionary dynamics of heterogeneous tumor cell populations taking
     pharmacokinetic and drug interaction effects into account to rationally identify
@@ -13,7 +9,7 @@ Description: ACESO is a multiscale computational framework to explore
     oncogene-driven cancers.
 Maintainer: Itziar Irurzun-Arana <itzirurzun@gmail.com>
 Depends:
-    R (>= 3.4.3)
+    R (>= 3.4.0)
 License: GPL (>= 2)
 Encoding: UTF-8
 Imports:
@@ -30,7 +26,7 @@ Imports:
     stats,
     utils
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.1
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr

@@ -44,4 +44,3 @@ print(gam.model)
 \seealso{
 \code{\link[mgcv]{gamObject}}
 }
-

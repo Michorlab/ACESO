@@ -42,4 +42,3 @@ type_i<-list(Type1)
 ni_t<-En_resistant_cells_i(t=100,type_0=Type0,type_i=type_i,i=1,approximation=F)
 }
 }
-

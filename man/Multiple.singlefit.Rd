@@ -46,4 +46,3 @@ Multiple.singlefit(growth_data,resp="Net_growth",conc="CONC",fct=drc::LL.4())
 Multiple.singlefit(growth_data,resp="Net_growth",conc="CONC",fct=drc::LL.4(),log.x=T)
 }
 }
-

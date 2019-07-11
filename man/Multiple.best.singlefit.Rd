@@ -41,4 +41,3 @@ growth_data<-net_growth_rate(growth_data)
 Multiple.best.singlefit(growth_data,resp="Net_growth",conc="CONC")
 }
 }
-

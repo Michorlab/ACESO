@@ -7,7 +7,7 @@
 pk.function(model, dosing_schedule = NULL, parameters = NULL,
   variability = NULL, tend, delta = 5e-05, pk.function = NULL,
   missing_times = NULL, output.time = NULL, output.conc = NULL,
-  scale = 1, ...)
+  scale = 1, scale.x = 1, ...)
 }
 \arguments{
 \item{model}{Structural PK model definition (mrgsolve model specification)}
@@ -30,7 +30,9 @@ pk.function(model, dosing_schedule = NULL, parameters = NULL,
 
 \item{output.conc}{vector of drug concentrations to interpolate}
 
-\item{scale}{scaling parameter}
+\item{scale}{scaling parameter for y axis}
+
+\item{scale.x}{scaling parameter for x axis}
 
 \item{...}{additional arguments for the mrgsim function from mrgsolve package}
 }
@@ -84,4 +86,3 @@ pk=pk.function(model=cmt1_iv,dosing_schedule=e1,tend=30,parameters = newpar)
 
 }
 }
-

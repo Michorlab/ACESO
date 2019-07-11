@@ -4,8 +4,8 @@
 \alias{define.Typei.cells}
 \title{define.Typei.cells}
 \usage{
-define.Typei.cells(Ni = 0, birth_rate, death_rate, mutation_rate, scale = 1,
-  pk.function = "pk")
+define.Typei.cells(Ni = 0, birth_rate, death_rate, mutation_rate,
+  scale = 1, pk.function = "pk")
 }
 \arguments{
 \item{Ni}{cell population at time 0.}
@@ -29,4 +29,3 @@ Define Type i cells: resistant cell line
 \examples{
 define.Typei.cells(Ni=0,birth_rate = 0.001,death_rate  = 0.005,mutation_rate=0.0001)
 }
-

@@ -44,4 +44,3 @@ ResponseSurface.plot(rmap,xl=expression(paste("[Dactolisib] (",mu,"M)", sep=""))
 \seealso{
 braidReports::responseMap
 }
-

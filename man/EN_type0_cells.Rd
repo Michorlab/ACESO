@@ -4,8 +4,8 @@
 \alias{EN_type0_cells}
 \title{EN_type0_cells}
 \usage{
-EN_type0_cells(T0 = 0, t, type_0, ui = 0, int.function = c("integrate",
-  "pracma"))
+EN_type0_cells(T0 = 0, t, type_0, ui = 0,
+  int.function = c("integrate", "pracma"))
 }
 \arguments{
 \item{T0}{Initial time. Default 0.}
@@ -36,4 +36,3 @@ EN_type0_cells(T0=0,t=50,type_0=Type0)*EN_type0_cells(T0=50,t=250,type_0=Type0)
 }
 
 }
-

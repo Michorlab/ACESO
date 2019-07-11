@@ -1,0 +1,41 @@
+---
+title: "One drug resistance mechanisms"
+author: "Itziar Irurzun Arana"
+date: "`r Sys.Date()`"
+output:  
+  prettydoc::html_pretty:
+    theme: cayman 
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Complex dosing schedules}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warnings= FALSE
+)
+```
+### Read cell proliferation file:
+
+Use **read.cellcount.data** function to create a data.frame with the info about cell proliferation under different drug concentrations.
+
+Mandatory columns to be in the .csv file: 
+
+* Viable.cells: cell count data
+* Time: time point
+* CONC: drug concentration
+
+Optional columns: 
+
+* Replicate: Technical replicate. If missing the program assumes that there is only 1 replicate.
+* Cell.line: Name of the cell line. If missing the fucntion introduces the name 'Cell line 1'
+* Type: numerical column specifiying the cell type (0: sensitive cells, 1: resistant cell to drug A, etc.). If missing the program assumes Type=0.
+
+```{r}
+growth_data=read.cellcount.data("cell_viability_assay.csv", sep=";")
+head(growth_data)
+```

@@ -49,4 +49,3 @@ scale_colour_discrete(name=expression(paste("[Trametinib] (",mu,"M)", sep="")))+
 theme_classic()+ylab("Birth rate (1/h)")
 }
 }
-

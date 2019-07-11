@@ -31,4 +31,3 @@ This function compares different models using the following criteria: the log li
 \description{
 Comparison of different models using the following criteria: the log likelihood value, Akaike's or Bayes information criterion (AIC) or the estimated residual standard error.
 }
-

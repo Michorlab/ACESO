@@ -231,7 +231,8 @@ easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL
 #' Fit Pharmacokinetic (PK) data and estimate PK parameters. The use of other software like NONMEM or MONOLIX is encoraged for estimation of parameters from different individuals.
 #'
 #' @param PK_data Data to fit (drug concentrations over time)
-#' @param DV Column name of the dependent variable (drug concentrations). "CONC" by default.
+#' @param x.name Column name of the independent variable (time) in the x axis. "time" by default.
+#' @param y.name Column name of the dependent variable (drug concentrations) in the y axis. "CONC" by default.
 #' @param model Structural PK model definition (mrgsolve model specification).
 #' @param initial_estimates list with the initial estimates for the PK parameters.
 #' @param log.yaxis logical to indicate if the values for the dependent variable should be log transformed. FALSE by default.

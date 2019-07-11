@@ -22,4 +22,3 @@ A dataframe with the relevant information about the cell viability assay.
 \description{
 Read the csv file where the apoptosis assay data is saved.
 }
-
