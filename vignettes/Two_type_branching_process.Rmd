@@ -40,6 +40,6 @@ Optional columns:
 * Type: numerical column specifiying the cell type (0: sensitive cells, 1: resistant cell to drug A, etc.). If missing the program assumes Type=0.
 
 ```{r}
-growth_data=read.cellcount.data("cell_viability_assay.csv", sep=";")
+growth_data=read.cellcount.data(system.file("extdata", "cell_viability_assay.txt", package = "ACESO"), sep=";")
 head(growth_data)
 ```
