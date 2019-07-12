@@ -1,0 +1,115 @@
+---
+title: "Three type birth-mutation-death process"
+author: "Itziar Irurzun Arana"
+date: "`r Sys.Date()`"
+output:  
+  prettydoc::html_pretty:
+    theme: cayman 
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Complex dosing schedules}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warnings= FALSE
+)
+```
+Load library:
+```{r}
+library(ACESO)
+```
+
+## Data
+In the current evaluation cell viability data resulting from the exposure of BT-20 triple-negative breast cancer cell line  to different concentration values of two small molecule kinase inhibitors (Dactolisib and Trametinib) is analyzed.
+```{r}
+data(Dactolisib_Trametinib_combination)
+head(Dactolisib_Trametinib_combination)
+
+DrugA=as.character(Dactolisib_Trametinib_combination$Small.Molecule.Name[1])
+DrugB=as.character(Dactolisib_Trametinib_combination$Small.Molecule.2.Name[1])
+print(c(DrugA,DrugB))
+```
+
+Exploratory analysis of the data:
+
+```{r}
+library(ggplot2)
+ggplot(data=Dactolisib_Trametinib_combination,aes(x=(CONC),y=Viable.cells,col=factor(CONC2)))+
+  geom_point(size=1.5)+
+  xlab(paste0("[",DrugA,"] (µM)"))+scale_colour_discrete(name=paste0("[",DrugB,"] (µM)"))+
+  theme_classic()+
+  theme(text = element_text(size=14))
+```
+BT-20 cells sensitive to both drugs were defined as type 0 cells, whereas cells resistant to trametinib and dactolisib were defined as type 1 and type 2 cells respectively. 
+
+# Dynamics of sensitive cells:
+
+##Calculate net growth rate
+Calculate the net growth rates of the BT-20 cell type for every concentration of the two drugs. Use the **net_growth_rate** function for this purpose, where an exponential growth function is assumed to calculate those rates.
+```{r}
+growth_data<-net_growth_rate(Dactolisib_Trametinib_combination)
+head(growth_data)
+```
+Plot the results:
+```{r}
+ggplot(data=growth_data,aes(x=(CONC),y=Net_growth,col=factor(CONC2)))+geom_point()+geom_line(linetype="dashed")+
+  theme(text = element_text(size=14))+xlab(paste0("[",DrugA,"] (µM)"))+
+  scale_colour_discrete(name=paste0("[",DrugB,"] (µM)"))+
+  theme_classic()+ylab("Net growth (1/h)")+theme(text = element_text(size=14))
+```
+## Calculate birth and death rates
+As in the LINCS database there is no information regarding apoptosis assays available to estimate the death rate of type 0 cells (d0) and assuming that these targeted therapies do not induce cell death per se, a different d0 value was defined for each combination of the drugs, which was equal to the minimum value needed to ensure that all the birth rates of type 0 cells (b0) were positive regardless of the treatment conditions:
+```{r}
+d0=vector("list", length = length(unique(growth_data$Cell.line)))
+names(d0)=unique(as.character(growth_data$Cell.line))
+d0[[1]]=-min(growth_data$Net_growth)
+d0
+```
+We use the **net_growth_rate** function again, to not only calculate the net growth rate parameter of the cells but also the birth and death rates:
+```{r}
+growth_data<-net_growth_rate(growth_data,death_rate = d0)
+ggplot(data=growth_data,aes(x=(CONC),y=Birth_rate,col=factor(CONC2)))+geom_point()+geom_line(linetype="dashed")+
+  theme(text = element_text(size=14))+xlab(paste0("[",DrugA,"] (µM)"))+
+  scale_colour_discrete(paste0("[",DrugB,"] (µM)"))+
+  theme_classic()+ylab("Birth rate of \n sensitive cells, b0 (1/h)")+theme(text = element_text(size=14))
+
+```
+Another plot type to analyze the response surface of the data:
+```{r}
+#We are going to remove the columns that are not necessary for the analysis of the data in this example:
+GD=growth_data[,c('Cell.line','CONC','CONC2','Net_growth','Type','Birth_rate','Death_rate')]
+GD=unique(GD)
+```
+Use **responseMap** function to reorganize the data to easily plot the surface of the birth rate values versus for both drug concentrations:
+```{r}
+library(braidReports)
+rmap <- responseMap(Birth_rate~CONC+CONC2,GD,logscale=T,interpolate=FALSE)
+DifferenceSurface.plot(rmap,zcenter=max(growth_data$Birth_rate)/2,
+                       xl=paste0("[",DrugA,"] (µM)"),
+                       yl=paste0("[",DrugB,"] (µM)"),
+                       zl="Birth rate of \n sensitive cells, b0 (1/h)",
+                       mid="yellow",low="hotpink1",high="darkturquoise")
+
+```
+Use **responseMap** again and **plot.ResponseSurface** to make a contour plot of the data. For this plot a interpolation of the data is needed (see logscale=T in the **responseMap** function):
+```{r}
+rmap <- responseMap(Birth_rate~CONC+CONC2,GD,logscale=T)
+
+ResponseSurface.plot(rmap,xl=paste0("[",DrugA,"] (µM)"),
+                     yl=paste0("[",DrugB,"] (µM)"),
+                     zl="Birth rate of \n sensitive cells, b0 (1/h)",
+                     palette=c("hotpink1","yellow","darkturquoise"))
+
+```
+## Sensitive cell model fitting
+Birth rate parameters were fitted nonparametrically using a Generalized Additive Model (GAM) to generate the predicted surface required for the simulation of the evolutionary process:
+```{r}
+gam.model=Multiple.resp.surface.fit(GD, title=", GAM",Drug1.name=paste0("[",DrugA,"] (µM)"),Drug2.name=paste0("[",DrugB,"] (µM)"))
+```
+
+# Dynamics of resistant cells:
