@@ -4,11 +4,12 @@
 #'
 #' Read the csv file where the apoptosis assay data is saved.
 #'
-#' @param filename name of the csv file. string.
+#' @param filename name of the csv file. string.'Time', 'CONC' and the column name specified
+#'  in column.name argument are mandatory columns in the file.
 #' @param sep the field separator character. Comma by default.
 #' @param combination boolean argument to specify if the file has drug combination data, that is, more that one drug concentration column. Default to FALSE.
 #' @param column.name string value to specify the column name where the total number or the fraction of death cells numbers are saved.
-#' @return A dataframe with the relevant information about the cell viability assay.
+#' @return A dataframe with the relevant information about the apoptosis assay.
 #' @export
 read.celldeath.file=function(filename,sep=",",combination=F,column.name="Apoptotic.fraction"){
   Apoptosis_time0<-Apoptotic.fraction<-Time<-Cell.line<-Type<-Replicate<-NULL
@@ -41,7 +42,7 @@ read.celldeath.file=function(filename,sep=",",combination=F,column.name="Apoptot
   # #New column with time 0 data
   dtdata=data.table::as.data.table(cell_death_data)
   if(any(cell_death_data$Time==0)){
-    dtdata[,Apoptosis_time0:=.(Apoptotic.fraction[Time==0]),by = .(Cell.line,Type,Replicate)]
+    eval(parse(text=paste0('dtdata[,Apoptosis_time0:=.(',column.name,'[Time==0]),by = .(Cell.line,Type,Replicate)]')))
     Time0=dtdata[dtdata$Time==unique(dtdata$Time)[is.finite(unique(dtdata$Time))][2],]
     Time0$Time=0
     Time0[,column.name]=Time0$Apoptosis_time0
