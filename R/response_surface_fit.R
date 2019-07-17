@@ -24,7 +24,6 @@ NULL
 #' print(gam.model)
 #' }
 
-
 resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',Drug1.name='Drug 1',Drug2.name='Drug 2',method=c('gam','loess')){
   method <- match.arg(method)
 
@@ -77,7 +76,7 @@ Multiple.resp.surface.fit=function(data,resp='Birth_rate',conc1='CONC',conc2='CO
  Cell.line<-NULL
  Type<-NULL
  CONC<-NULL
- rmap<-NULL
+ #rmap<-NULL
  
   method <- match.arg(method)
 

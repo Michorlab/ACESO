@@ -1,6 +1,38 @@
 #' @import ggplot2
 NULL
 
+#' responseMap
+#' 
+#' @param model a two-column array containing the values of input 1 and input 2 in each data point, or a symbolic formula (e.g. act ~ conc1+conc2) specifying which variables are to be visualized
+#' @param data  if model is an array, a vector of values in response to inputs 1 and 2; if model is a formula, a data frame containing the columns specified in formula
+#' @param irreg reflects whether or not data points lie in a regularly-spaced grid in the space of data points to be plotted
+#' @param interpolate determines whether the plot will produce a smoothed response surface using Gaussian interpolation, or if the space will be visualized as a set of discrete measurements using nearest neighbor segmentation
+#' @param margins determines whether input pairs in which one of the two inputs is zero will be plotted; applies only to logarithmically scaled plots
+#' @param logscale determines whether the input variables will be plotted on a logarithmic scale, or a standard linear scale. Because this function is intended primarily for visualizing combined action dose-response, a logarithmic dose-pair space is the default.
+#' @param zlims an optional parameter specifying lower and upper bounds on the response variable. If present, all effect values outside the given range will be clipped to the minimum and maximum values
+#' @param raster by default, interpolated response surfaces will be rendered using the ggplot2 function geom_raster, a faster and optimized raster image version of geom_tile. In certain settings, however, geom_raster can produce unusual appearance. Setting this parameter to FALSE will force the plot to be rendered using geom_tile.
+#' @return A ggplot2 plot object, depicting the response variable (represented by the plot\'s \'fill\' variable) as a function of two inputs (the x- and y-dimensions).
+#' @author Nathaniel R. Twarog
+#' @references Twarog, N.R., Stewart, E., Vowell Hamill, C., and Shelat, A. BRAID: A Unifying Paradigm for the Analysis of Combined Drug Action. Scientific Reports In Press (2016).
+#' @seealso braidReports::responseMap
+#' @export
+#' @examples 
+#' \dontrun{
+#' data(Dactolisib_Trametinib_combination)
+#' growth_data<-net_growth_rate(Dactolisib_Trametinib_combination)
+#' rmap <- responseMap(Net_growth~CONC+CONC2,GD,logscale=T)
+#'
+#' ResponseSurface.plot(rmap,xl=expression(paste("[Dactolisib] (",mu,"M)", sep="")),
+#'                     yl=expression(paste("[Trametinib] (",mu,"M)", sep="")),
+#'                     zl="Net growth rate of \n sensitive cells",
+#'                    palette=c("hotpink1","yellow","darkturquoise"))
+#' }
+responseMap<-function(model,data,irreg=FALSE,interpolate=TRUE,margins=TRUE,
+                      logscale=TRUE,zlims=NULL,raster=TRUE){
+  return(braidReports::responseMap(model=model,data=data,irreg=irreg,interpolate=interpolate,margins=margins,
+                                   logscale=logscale,zlims=zlims,raster=raster))
+}
+
 #' ResponseSurface.plot
 #'
 #' 

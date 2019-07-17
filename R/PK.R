@@ -7,9 +7,13 @@ NULL
 NULL
 #' @import utils
 NULL
+#' @import drc
+NULL
 #' @importFrom mrgsolve mrgsim param omat ev mcode
 NULL
 #' @importFrom minpack.lm nlsLM
+NULL
+#' @import prettydoc
 NULL
 
 #' read.PKdata

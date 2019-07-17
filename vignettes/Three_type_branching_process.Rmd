@@ -7,7 +7,7 @@ output:
     theme: cayman 
     highlight: github
 vignette: >
-  %\VignetteIndexEntry{Complex dosing schedules}
+  %\VignetteIndexEntry{Three type birth-mutation-death process}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -87,7 +87,6 @@ GD=unique(GD)
 ```
 Use **responseMap** function to reorganize the data to easily plot the surface of the birth rate values versus for both drug concentrations:
 ```{r}
-library(braidReports)
 rmap <- responseMap(Birth_rate~CONC+CONC2,GD,logscale=T,interpolate=FALSE)
 DifferenceSurface.plot(rmap,zcenter=max(growth_data$Birth_rate)/2,
                        xl=paste0("[",DrugA,"] (µM)"),

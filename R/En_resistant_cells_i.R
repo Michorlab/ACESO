@@ -28,7 +28,7 @@
 #'ni_t<-En_resistant_cells_i(t=100,type_0=Type0,type_i=type_i,i=1,approximation=F)
 #' }
 En_resistant_cells_i<-function(t,type_0,type_i,i,type_icr=NULL,approximation=T){
-  int.function <- match.arg(int.function)
+ # int.function <- match.arg(int.function)
   if(approximation){
       En_res<-En_resistant_cells_i.aprox(t,type_0,type_i,i,type_icr)
   }else{

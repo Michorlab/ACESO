@@ -8,7 +8,8 @@ read.celldeath.file(filename, sep = ",", combination = F,
   column.name = "Apoptotic.fraction")
 }
 \arguments{
-\item{filename}{name of the csv file. string.}
+\item{filename}{name of the csv file. string.'Time', 'CONC' and the column name specified
+in column.name argument are mandatory columns in the file.}
 
 \item{sep}{the field separator character. Comma by default.}
 
@@ -17,7 +18,7 @@ read.celldeath.file(filename, sep = ",", combination = F,
 \item{column.name}{string value to specify the column name where the total number or the fraction of death cells numbers are saved.}
 }
 \value{
-A dataframe with the relevant information about the cell viability assay.
+A dataframe with the relevant information about the apoptosis assay.
 }
 \description{
 Read the csv file where the apoptosis assay data is saved.

@@ -42,7 +42,7 @@ En_resistant_cells.integrate<-function(N,t,type_0,type_i,type_icr=NULL){
 
 
   InnerIntegral = function(y,bi,di,ui,type_0,i,ui_cr){
-    exp(-pracma::integral(fi,lower=0,upper=y,bi=bi,di=di))*ui(y)*type_0@b0(y)*EN_type0_cells(y,type_0 =type_0)
+    exp(-integrate(fi,lower=0,upper=y,bi=bi,di=di)$value)*ui(y)*type_0@b0(y)*EN_type0_cells(y,type_0 =type_0)
   }
 
   ni<-matrix(NA,ncol=t+1,nrow=N)
@@ -56,7 +56,7 @@ En_resistant_cells.integrate<-function(N,t,type_0,type_i,type_icr=NULL){
     ni[i,]<- sapply(0:t,function(j){
       (type_i[[i]]@Ni +
          integrate(Vectorize(InnerIntegral,"y") ,
-                   lower=0, upper=j,bi=type_i[[i]]@bi,di=type_i[[i]]@di,ui=type_i[[i]]@ui,N0=type_0@N0,b0=type_0@b0,d0=type_0@d0,i=i,ui_cr=ui_cr)$value)/exp(-integrate(fi,0,j,bi=type_i[[i]]@bi,di=type_i[[i]]@di)$value)
+                   lower=0, upper=j,bi=type_i[[i]]@bi,di=type_i[[i]]@di,ui=type_i[[i]]@ui,type_0=type_0,i=i,ui_cr=ui_cr)$value)/exp(-integrate(fi,0,j,bi=type_i[[i]]@bi,di=type_i[[i]]@di)$value)
     })
   }
   return(ni)
