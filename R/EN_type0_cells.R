@@ -26,7 +26,7 @@ NULL
 EN_type0_cells<-function(T0=0,t,type_0,ui=0,int.function=c("integrate","pracma")){
   int.function <- match.arg(int.function)
   if(int.function=="integrate"){
-    n0=EN_type0_cells(T0=T0,t=t,type_0=type_0,ui=ui)
+    n0=EN_type0_cells_integrate(T0=T0,t=t,type_0=type_0,ui=ui)
   }else if(int.function=="pracma"){
     n0=EN_type0_cells.pracma(T0=T0,t=t,type_0=type_0,ui=ui)
   }

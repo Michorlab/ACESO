@@ -42,7 +42,7 @@ En_resistant_cells.integrate<-function(N,t,type_0,type_i,type_icr=NULL){
 
 
   InnerIntegral = function(y,bi,di,ui,type_0,i,ui_cr){
-    exp(-integrate(fi,lower=0,upper=y,bi=bi,di=di)$value)*ui(y)*type_0@b0(y)*EN_type0_cells(y,type_0 =type_0)
+    exp(-integrate(fi,lower=0,upper=y,bi=bi,di=di)$value)*ui(y)*type_0@b0(y)*EN_type0_cells(t=y,type_0 =type_0)
   }
 
   ni<-matrix(NA,ncol=t+1,nrow=N)
@@ -62,7 +62,7 @@ En_resistant_cells.integrate<-function(N,t,type_0,type_i,type_icr=NULL){
   return(ni)
 }
 
-En_resistant_cells.aprox<-function(t,N,type_0,type_i,type_icr=NULL){
+En_resistant_cells.aprox<-function(N,t,type_0,type_i,type_icr=NULL){
 
   if(!is.list(type_i)) stop("type_i must be a list of resistant cell types")
   type.icr=NULL

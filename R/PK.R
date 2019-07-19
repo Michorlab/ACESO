@@ -13,8 +13,6 @@ NULL
 NULL
 #' @importFrom minpack.lm nlsLM
 NULL
-#' @import prettydoc
-NULL
 
 #' read.PKdata
 #'

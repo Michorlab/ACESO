@@ -23,6 +23,7 @@ Load library:
 ```{r}
 library(ACESO)
 library(mrgsolve)
+library(ggplot2)
 ```
 ### Read cell proliferation file:
 
@@ -37,7 +38,7 @@ Mandatory columns to be in the .csv file:
 Optional columns: 
 
 * Replicate: Technical replicate. If missing the program assumes that there is only 1 replicate.
-* Cell.line: Name of the cell line. If missing the fucntion introduces the name 'Cell line 1'
+* Cell.line: Name of the cell line. If missing the function introduces the name 'Cell line 1'.
 * Type: numerical column specifiying the cell type (0: sensitive cells, 1: resistant cell to drug A, etc.). If missing the program assumes Type=0.
 
 ```{r}
@@ -133,7 +134,7 @@ If the user does not want to use the best model selected by  **Multiple.best.sin
 In this example, a 4 parameter log-logistic function (called LL.4) is selected to fit the birth rate vs concentration curve of resistant cells (Type=1):
 
 ```{r}
-B1.fit=Multiple.singlefit(all.data[all.data$Type==1,],fct=LL.4(),resp="Birth_rate")
+B1.fit=Multiple.singlefit(all.data[all.data$Type==1,],fct=drc::LL.4(),resp="Birth_rate")
 ```
 
 drc package only includes non-linear functions to fit the concentration-response curves.
@@ -248,24 +249,41 @@ In order to simulate the number of sensitive cells over time use **EN_type0_cell
 * ui: mutation rate of the resistant population (numeric).
 * int.function: integration function to use in R. Options are "integrate" from base R or "pracma"which uses functions from the pracma package. "pracma" is more robust but slower than "integrate". 
 ```{r}
+ EN_type0_cells(t=10,type_0=Type0,ui=c(Type1@ui))
  EN_type0_cells(t=10,type_0=Type0,ui=c(Type1@ui),int.function="pracma")
 ```
 
 This function gave us the number of sensitive cells at 10 days. To do this for a vector of times:
 ```{r}
-sapply(seq(0,30,1),function(i){ EN_type0_cells(t=i,type_0=Type0,ui=c(Type1@ui),int.function = "pracma")})
+sapply(seq(0,30,1),function(i){ EN_type0_cells(t=i,type_0=Type0,ui=c(Type1@ui))})
 ```
 
 ### Simulate the number of resistant cells and probability of resistance
 In order to simulate the number of resistant cells, use **En_resistant_cells_i** function with the following arguments:
 
+* N: the total number of the resistant cell types.
 * t: time 
 * type_0: Type-0 S4 object
 * type_i: list with all the Type-i S4 objects
-* N: the total number of the resistant cell types.
 * approximation: logical argument indicating if an approximation of the numerical integration method must be used or not. Default to TRUE for faster computation.
 
 
 ```{r eval=FALSE}
-En_resistant_cells(N=1,t=10,type_0=Type0,type_i=list(Type1),approximation=T)
+En_resistant_cells(N=1,t=10,type_0=Type0,type_i=list(Type1))
+```
+To do this for a vector of different times:
+```{r eval=FALSE}
+sapply(c(0,2,4,8),function(i){En_resistant_cells(N=1,t=i,type_0=Type0,type_i=list(Type1))})
+
+```
+To simulate the probability of resistance use **Prob_resistance** function with the following arguments:
+
+* t: time of production of a resistant cell clone
+* type_0: Type-0 S4 object
+* type_i: list with all the Type-i S4 objects 
+* N: number of resistant cell clones
+
+```{r, eval=FALSE}
+#Prob_resistance(t=10,type_0=Type0,type_i=list(Type1),N=1)
+#Not executed because it is a very time consuming function:
 ```

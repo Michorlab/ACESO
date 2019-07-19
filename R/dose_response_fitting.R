@@ -72,7 +72,9 @@ best.singlefit=function(data,resp="Birth_rate",conc='CONC',type='continuous',IC=
 
   if(!all(is.na(eval(parse(text=paste0('data$',resp)))))){
 
-    M1=suppressWarnings(model.select(eval(parse(text=formu)),data=data, list(LL.4(),L.3(),L.4(),L.5(),LL.2(),LL.3(), LL.5(), W1.2(), W1.3(), W1.4(),W2.4(), EXD.2(),EXD.3(),G.2(),G.3(),G.4(), LN.3(),LN.4()),type=type,icfct=icfct,...))
+    #M1=suppressWarnings(model.select(eval(parse(text=formu)),data=data, list(LL.4(),L.3(),L.4(),L.5(),LL.2(),LL.3(), LL.5(), W1.2(), W1.3(), W1.4(),W2.4(), EXD.2(),EXD.3(),G.2(),G.3(),G.4(), LN.3(),LN.4()),type=type,icfct=icfct,...))
+    M1=suppressWarnings(model.select(eval(parse(text=formu)),data=data, list('LL.4','L.3','L.4','L.5','LL.2','LL.3','LL.5', 'W1.2', 'W1.3', 'W1.4', 'W2.4', 'EXD.2','EXD.3','G.2','G.3','G.4', 'LN.3','LN.4'),type=type,icfct=icfct,...))
+    
     #linear model
     L1=eval(parse(text=paste0('lm(',formu, ',data=data)')))
     ic=AIC(L1)
@@ -375,9 +377,10 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
   }
   lenFL <- length(fctList)
   for(i in 1:lenFL){
-    object=try(drc::drm(formula, data=data, fct=eval(parse(text=paste0(fctList[[i]]$name,"()"))),type=type,...),silent=TRUE)
+    object=try(drc::drm(formula, data=data, fct=eval(parse(text=paste0("drc::",fctList[[i]],"()"))),type=type,...),silent=TRUE)
     if(!inherits(object, "try-error")){
-      fctList=fctList[-which(lapply(fctList,function(x) x$name==object$fct$name)==T)] #Elimino el que ha funcionado de la lista
+      object$fct$name=fctList[i]
+      fctList=fctList[-i] #Elimino el que ha funcionado de la lista
       break #Si no falla, seguimos
     }
   }
@@ -385,11 +388,11 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
   contData <- identical(type, "continuous")
   nestedInd <- 3 + contData + nested
   mc <- match.call()
-
+  
   retMat <- matrix(0, lenFL + 1, 3 + contData + nested)
   retMat[1, 1] <- logLik(object)
   retMat[1, 2] <- icfct(object)
-  retMat[1, 3] <- drc::modelFit(object)[2, 5]
+  retMat[1, 3] <- modelFit(object)[2, 5]
   if (contData) {
     tryRV <- try(summary(object)$resVar, silent = TRUE)
     if (!inherits("tryRV", "try-error")) {
@@ -407,12 +410,14 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
   if (!is.null(fctList)) {
     prevObj <- object
     for (i in 1:lenFL) {
-      tempObj <- try(stats::update(object, fct = fctList[[i]]),  silent = TRUE)
-      fctList2[i + 1] <- fctList[[i]]$name
+      #tempObj <- try(update(object, fct = fctList[[i]]),  silent = TRUE) 
+      #fctList2[i + 1] <- fctList[[i]]$name
+      tempObj <- try(update(object, fct = eval(parse(text=paste0("drc::",fctList[[i]],"()")))),  silent = TRUE) 
+      fctList2[i + 1] <- fctList[i]
       if (!inherits(tempObj, "try-error")) {
         retMat[i + 1, 1] <- logLik(tempObj)
         retMat[i + 1, 2] <- icfct(tempObj)
-        retMat[i + 1, 3] <- drc::modelFit(tempObj)[2, 5]
+        retMat[i + 1, 3] <- modelFit(tempObj)[2, 5]
         if (contData) {
           tryRV2 <- try(summary(tempObj)$resVar, silent = TRUE)
           if (!inherits("tryRV2", "try-error")) {
@@ -423,7 +428,7 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
           }
         }
         if (nested) {
-          retMat[i + 1, nestedInd] <- anova(prevObj,
+          retMat[i + 1, nestedInd] <- anova(prevObj, 
                                             tempObj, details = FALSE)[2, 5]
         }
       }
@@ -442,7 +447,7 @@ model.select=function (formula, data,fctList = NULL, type='continuous',nested = 
     cnames <- c(cnames, "Nested F test")
   }
   colnames(retMat) <- cnames
-
+  
   if (sorted != "no") {
     return(retMat[order(retMat[, sorted]), -3])
   }
