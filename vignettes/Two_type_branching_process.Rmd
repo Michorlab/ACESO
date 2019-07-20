@@ -19,7 +19,13 @@ knitr::opts_chunk$set(
   warnings= FALSE
 )
 ```
-Load library:
+
+Let us consider the two-type birth-death process shown in Figure 1. This model is
+extensively used in investigating the dynamics of tumor cells in response to treatment, where a population initially sensitive to therapy will gain resistance via mutation and expand at a different rate. In this example, we evaluate erlotinib treatment and how erlotinib-sensitive (Type 0 cells, blue in the figure) and erlotinib-resistant (Type 1 cell, green) cell birth and death rates are defined using PC-9 cell viability and apoptosis assay data, how the pharmacokinetics of erlotinib can be defined to evaluate its effect of the growth kinetics of each cell type and finally, how the evolution of these cells over time can be calculated using ACESO package.
+
+![Figure 1. Two type branching process.](2type_branching.jpg)
+
+Load libraries:
 ```{r}
 library(ACESO)
 library(mrgsolve)
@@ -45,17 +51,17 @@ Optional columns:
 growth_data=read.cellcount.data(system.file("extdata", "cell_viability_assay.txt", package = "ACESO"), sep=";")
 head(growth_data)
 ```
-Two new columns are created from the csv file:
+Two new columns are created:
 
 * Cell_Count_0: cell count at time 0.
 * Control: cell count when there is no drug concentration
 
 
-```{r warnings=F}
+```{r}
 #Exploraty plot:  viable cells over time
 library(ggplot2)
 ggplot(data=growth_data,aes(x=Time,y=Viable.cells,col=factor(CONC)))+geom_point()+
-  geom_smooth(se=F)+facet_wrap(~Type)
+  geom_smooth(se=F,method="lm")+facet_wrap(~Type)+scale_y_continuous(trans="log")+ylab("Viable cells (log scale)")+scale_colour_discrete(name="Dose (µM)")
 ```
 
 ### Read cell death file:
@@ -65,7 +71,7 @@ Call **read.celldeath.file** to create a data.frame with the info about the tota
 Necessary columns to be in the .csv file: 
 
 * Time: time point
-* Annexin.Vplus or Dead.cells: 'Annexin.Vplus' describes the franction of dead cells and 'Dead.cells' the total count of dead cells. At least one of these columns is mandatory.
+* column.name:  name of the column where the fraction of dead cells or the total count of dead cells is stored.
 * CONC: drug concentration
 ```{r}
 cell_death=read.celldeath.file(system.file("extdata", "apoptosis_assay.txt", package = "ACESO"), column.name="Apoptotic.fraction",sep=";")
@@ -88,9 +94,10 @@ ggplot(cell_death[cell_death$Time!=0,])+
   facet_wrap(~factor(Type2,levels=c("sensitive","resistant")))+
   xlab("Time (hours)")+ylab("Fraction of death cells")+
   geom_errorbar(data=my_sum[my_sum$Time!=0,], aes(x=as.factor(Time), ymin=mean-sd, ymax=mean+sd,color=as.factor(CONC)),width=.2, position=position_dodge(0.9))+
-  theme_bw()+ggsci::scale_color_jco(name="Erlotinib concentration (µM)")+ggsci::scale_fill_jco(name="Erlotinib concentration (µM)")+
+  theme_bw()+scale_color_brewer(name="Erlotinib concentration (µM)",palette="Spectral")+scale_fill_brewer(name="Erlotinib concentration (µM)",palette="Spectral")+
   theme(text = element_text(size=14))+theme(legend.position="top") 
 ```
+
 ### Calculate net growth rate from cell proliferation data:
 We assume an exponential growth to calculate the net growth rate and decided not to use the data corresponding to time = 0 to calculate those rates:
 ```{r}
@@ -98,16 +105,17 @@ growth_data<-net_growth_rate(growth_data,time0_data = F)
 head(growth_data) #See the values in Net_growth column
 ```
 ### Calculate death rate:
-Use the data from cell apoptosis assays and the data where the net growth rate parameters have been calculated  to compute the death rate parameter. Call **calculate_death_rate** for this purpose.
+Use the data from cell apoptosis assays and the data where the net growth rate parameters have been calculated  to compute the death rate parameter. Call **calculate_death_rate** for this purpose. You must also specify the column name where the apoptotic cell count or the apoptotic cell fraction is stored, and finally specify if this column stores a fraction or the total counts by setting the argument 'Apoptotitic.franction' to TRUE or FALSE.
 ```{r}
 all.data=calculate_death_rate(net_growth_data=growth_data,cell_death_data =cell_death, column.name = "Apoptotic.fraction",Apoptotic.fraction = T)
 ```
 
-Plot the resulting death and birth rates:
+Plot the resulting death and birth rates for each cell type:
 ```{r}
-ggplot(all.data,aes(x=CONC,y=Death_rate))+geom_point()+scale_y_continuous(limits = c(0, 0.05))+facet_wrap(~Type)
+ggplot(all.data,aes(x=CONC,y=Death_rate))+geom_point()+scale_y_continuous(limits = c(0, 0.05))+facet_wrap(~Type)+ylab("Death rates (1/h)")+xlab("Drug concentration (µM)")
 
-ggplot(all.data,aes(x=CONC,y=Birth_rate))+geom_point()+facet_wrap(~Type)
+ggplot(all.data,aes(x=CONC,y=Birth_rate))+geom_point()+facet_wrap(~Type)+
+  ylab("Birth rates (1/h)")+xlab("Drug concentration (µM)")
 ```
 
 ## Fit the curves
@@ -117,13 +125,15 @@ In this example we only have data from one cell.line (PC-9), but this function i
 To perform this task easily and faster, we included the flexible and built-in model functions of the drc R package. drc was developed to provide nonlinear model fitting for dose-response analysis and it already includes the most common function to fit this type of curves. To see all the different built-in functions included in the package write: drc::getMeanFunctions().  **Multiple.best.singlefit** tries all the different models of drc library and selects the best one for you based on AIC or BIC (by default AIC is used).
 
 ```{r}
+#Fit birth rates
 BR.fit=Multiple.best.singlefit(all.data,resp="Birth_rate")
 BR.fit
+#Fit death rates
 DR.fit=Multiple.best.singlefit(all.data,resp="Death_rate")
 DR.fit
 ```
 
-If the user wants to check all the models that has been compared for a particupar type of cells **best.singlefit** can be used. Here we are going to check all the models tested for the resistant cell line (Type=1):
+If the user wants to check all the models that has been compared for a particupar type of cells, **best.singlefit** can be used. Here we are going to check all the models tested for the birth rates of the resistant cell line (Type=1):
 
 ```{r}
 best.singlefit(all.data[all.data$Type==1,],resp="Birth_rate",compare=T)
@@ -216,7 +226,7 @@ pk2=function(t, Cp0,k, time_interval,time_first_dose=0){
   return(Cp)
 }
 ```
-Additionally, a csv with pharmacokinetic data can be uploaded to fit a curve selecting one of the pk models from the model library. Use **Estimate.PK** function for this purpose (see the help function for an example). For complicated pk models or complex data, we recommend the use of NONMEM, MONOLIX or other parameter estimation software.
+Additionally, a csv with pharmacokinetic data can be uploaded to fit a curve selecting one of the pk models from the model library. Use **Estimate.PK** function for this purpose (see the help function for an example). For complex pk models or data, we recommend the use of NONMEM, MONOLIX or other parameter estimation software.
 
 ### Define sensitive and resistant cells 
 We need to define the sensitive (Type 0) and resistant cells (Type 1) to perfom the simulations. 
@@ -226,8 +236,12 @@ To define cell types the following arguments are needed:
 * birth_rate: birth rate function. It can be a numeric value, a user defined function or the result of a model fitting function. If the user provides a numeric value, it is assumed that the birth rate remains constant during the simulation.
 * death_rate death rate function. It can be a numeric value, a user defined function or the result of a model fitting function.If the user provides a numeric value, it is assumed that the death rate remains constant during the simulation.
 * scale: scaling parameter.
+* pk.function: name of the pharmacokinetic function that will affect to the rates of the cells.
 
-We will use a the previously parameterized functions for the birth rates and constant values for the death rates as the variation of these parameters is very low. 
+For the resistant cell types, an additional argument is needed:
+* mutation_rate: Numeric or function specifying the mutation rates for the cell type defined.
+
+We will use the previously fitted functions for the birth rates and constant values for the death rates as the variation of death rate values for the different drug concentrations is very low. 
 
 ```{r}
 Type0 <-define.Type0.cells(N0=10^6,birth_rate = 'BR.fit[[1]]',death_rate= 0.0085,scale=24,pk.function = 'pk')

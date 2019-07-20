@@ -8,7 +8,7 @@
 data(Dactolisib_Trametinib_rates)
 }
 \description{
-Dataset containing the effect of the combination of Dactolisib and Trametinib on the birth rate of drug sensitive BT-20 cell line.
+Dataset containing the effect of the combination of dactolisib and trametinib on the birth rate of drug sensitive BT-20 cell line.
 }
 \details{
 The data consists of a dataframe named GD with the following columns:
