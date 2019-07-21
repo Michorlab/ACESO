@@ -9,7 +9,7 @@ NULL
 NULL
 #' @import drc
 NULL
-#' @importFrom mrgsolve mrgsim param omat ev mcode
+#' @importFrom mrgsolve mrgsim param omat ev mcode mread
 NULL
 #' @importFrom minpack.lm nlsLM
 NULL
