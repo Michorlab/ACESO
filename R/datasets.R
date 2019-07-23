@@ -110,6 +110,8 @@ NULL
 #'   \item Net_growth: net growth rates of the cells under different drug concentrations.
 #'   \item Birth_rate: birth rate of the sensitive cell line influenced by different drug concentrations.
 #'   \item Death_rate: Constant death rate.
+#'   \item Drug.Name: Name of the drug whose concentrations are stored in CONC.
+#'   \item Drug2.Name: Name of the drug whose concentrations are stored in CONC2.
 #' }
 #'
 #'  
