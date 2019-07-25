@@ -28,5 +28,6 @@ Imports:
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: knitr,
-    rmarkdown
-VignetteBuilder: knitr
+    rmarkdown,
+    prettydoc
+VignetteBuilder: knitr, rmarkdown

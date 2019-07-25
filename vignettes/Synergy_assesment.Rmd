@@ -19,15 +19,17 @@ knitr::opts_chunk$set(
   warnings= FALSE
 )
 ```
+In order to quantify the degree of synergy/antagonism between two compounds, the typical approach is to compare their measured combination effect to a null reference model of no interaction, i.e. the expected response assuming no interaction between the two compounds.  If the combination response is greater than what is expected by the reference model, the combination is classified as synergistic, while antagonism is defined when the combination produces less than the expected effect. 
+
+There are several well-known conventional approaches that define different null models to assess drug synergy/antagonism. In this example, we will compare the drug-concentration dependent birth rates that can be obtained from the analysis of cell vialibility and apoptosis assay data, to the birth rates obtained under two common no-interaction models: Loewe additivity and Highest Single Agent. 
 
 Load libraries:
 ```{r}
 library(ACESO)
-library(ggplot2)
 ```
 
 ## Data
-In the current evaluation, cell viability data resulting from the exposure of BT-20 triple-negative breast cancer cell line  to the combination of different concentrations of two small molecule kinase inhibitors (dactolisib and trametinib) is analyzed. The data was obtained from the HMS LINCS database (\url{https://lincs.hms.harvard.edu/}). The objective of this vignette is to analyze the possible synergism that arises from the combination of the drugs. 
+In the current evaluation, cell viability data resulting from the exposure of BT-20 triple-negative breast cancer cell line  to the combination of different concentrations of two small molecule kinase inhibitors (dactolisib and trametinib) is analyzed. The data was obtained from the HMS LINCS database (\url{https://lincs.hms.harvard.edu/}). The objective of this vignette is to analyze the possible synergism that arises from the combination of the drugs. The birth and death rate have been already calculated using  this data and functions from ACESO package. 
 
 ```{r}
 data(Dactolisib_Trametinib_rates)
@@ -41,8 +43,8 @@ Use **responseMap** function to plot the surface of the birth rate values versus
 ```{r}
 rmap <- responseMap(Birth_rate~CONC+CONC2,GD,logscale=T,interpolate=FALSE)
 DifferenceSurface.plot(rmap,zcenter=max(GD$Birth_rate)/2,
-                       xl=paste0("[",DrugA,"] (µM)"),
-                       yl=paste0("[",DrugB,"] (µM)"),
+                       xl=" [Dactoloisib] (µM)",
+                       yl="[Trametinib] (µM)",
                        zl="Birth rate of \n sensitive cells, b0 (1/h)",
                        mid="yellow",low="hotpink1",high="darkturquoise")
 
@@ -52,13 +54,15 @@ Use **responseMap** again and **plot.ResponseSurface** to make a contour plot of
 ```{r}
 rmap <- responseMap(Birth_rate~CONC+CONC2,GD,logscale=T)
 
-ResponseSurface.plot(rmap,xl=paste0("[",DrugA,"] (µM)"),
-                     yl=paste0("[",DrugB,"] (µM)"),
+ResponseSurface.plot(rmap,xl=" [Dactoloisib] (µM)",
+                     yl="[Trametinib] (µM)",
                      zl="Birth rate of \n sensitive cells, b0 (1/h)",
                      palette=c("hotpink1","yellow","darkturquoise"))
 
 ```
+
 ## Loewe additivity
+Loewe additivity model defines synergy/antagonism as a combined inhibitory effect that is greater/lower than the sum of the individual effects of the drugs. The null reference model in this case is the sum of the individual effect of each drug, which is calculated from the sigmoidal fits of the single-agent response curves. To automatically perform this task the **Loewe** function can be used:
 ```{r}
 GD=Loewe(data=GD,resp = 'Birth_rate')
 ```
@@ -67,51 +71,32 @@ Now we plot the response surface of the data using the newly created column to c
 ```{r}
 rmap_loewe <- responseMap(loewe_additivity~CONC+CONC2,GD,logscale=T)
 
-ResponseSurface.plot(rmap_loewe,xl=paste0("[",DrugA,"] (µM)"),
-                     yl=paste0("[",DrugB,"] (µM)"),
+ResponseSurface.plot(rmap_loewe,xl=" [Dactoloisib] (µM)",
+                     yl="[Trametinib] (µM)",
                      zl="Birth rate of \n sensitive cells, b0 (1/h)",
                      palette=c("hotpink1","yellow","darkturquoise"))
 ```                     
 
-For a proper comparison of the surfaces, we calculate the difference between them and plot the results in a colored pairwise matrix:
+For a proper comparison of the surfaces, we calculate the difference between them and plot the results in a colored pairwise matrix. The score showed in this matrices reflects the difference between the measurement and the surface obtained under the no interaction models in a way that values less than zero (blue) represent antagonism and values greater that zero (yellow) represent synergism. 
 
 ```{r}
 GD$diffLoewe=(GD$loewe_additivity-GD$Birth_rate)
 
-GD$CONC_String<-as.character(GD$CONC)
-GD$CONC2_String<-as.character(GD$CONC2)
- GD$CONC2_String <- factor(GD$CONC2_String, levels = as.character(sort(as.numeric(unique(GD$CONC2_String)))))
-
-ggplot(data=GD, aes(x = CONC_String, y = CONC2_String)) + 
-  geom_raster(aes(fill=diffLoewe)) + 
-  scale_fill_gradient2(midpoint=0,mid = "#333333",low="#018571",high="#FFCC00","Loewe score")+
-  labs(x="Dactolisib concentration (µM)", y="Trametinib concentration (µM)") +
-  theme(text=element_text(size=9),
-                      axis.text=element_text(size=6.5,colour="black"),
-                      strip.text=element_text(size=7.5),
-                      axis.title=element_text(colour="black"))
+p=SynergyMatrix.plot(GD,resp="diffLoewe")
+p+ggplot2::labs(x="Dactolisib concentration (µM)", y="Trametinib concentration (µM)")
 
 ```
 
 ## Highest Single Agent (HSA)
-Repeat the process using the HSA model:
+Now, we are going to repeat the process using the Highest Single Agent (HSA) model.  HSA, also known as Gaddum's non-interaction model, is another popular model which defines a independent action of the drugs when the predicted effect of a combination is  that of the one most effective drug alone. To calculate the null surface of the HSA model, use **HSA** function:
 ```{r}
 GD=HSA(GD,resp = 'Birth_rate')
 
 GD$diffHSA=(GD$HSA_response-GD$Birth_rate)
 
-GD$CONC_String<-as.character(GD$CONC)
-GD$CONC2_String<-as.character(GD$CONC2)
- GD$CONC2_String <- factor(GD$CONC2_String, levels = as.character(sort(as.numeric(unique(GD$CONC2_String)))))
+p2=SynergyMatrix.plot(GD,resp="diffHSA")
+p2+ggplot2::labs(x="Dactolisib concentration (µM)", y="Trametinib concentration (µM)")
 
-ggplot(data=GD, aes(x = CONC_String, y = CONC2_String)) + 
-  geom_raster(aes(fill=diffHSA)) + 
-  scale_fill_gradient2(midpoint=0,mid = "#333333",low="#018571",high="#FFCC00","HSA score")+
-  labs(x="Dactolisib concentration (µM)", y="Trametinib concentration (µM)") +
-  theme(text=element_text(size=9),
-                      axis.text=element_text(size=6.5,colour="black"),
-                      strip.text=element_text(size=7.5),
-                      axis.title=element_text(colour="black"))
 ```
 
 

@@ -161,3 +161,44 @@ Loewe<-function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',same.Emax=F,Em
 }
 
 
+#'  Colored concentration pairwise synergy matrix
+#'
+#' @param data input data
+#' @param resp Name of the column in the dataset with the effect/response to be fitted.
+#' @param conc1 Name of the column in the dataset with the concentrations for drug 1. 'CONC' by default.
+#' @param conc2 Name of the column in the dataset with the concentrations for drug 1. 'CONC2' by default.
+#'
+#' @return Colored concentration pairwise matrix reflecting the difference between the measurement and the surface obtained under a no-interaction model. Values less than zero (blue) represent antagonism and values greater that zero (yellow) represent synergism. 
+#' @export
+#'
+#' @examples 
+#' \dontrun{
+#' data(Dactolisib_Trametinib_rates)
+#' head(GD)
+#' GD=Loewe(data=GD,resp = 'Birth_rate')
+#' GD$diffLoewe=(GD$loewe_additivity-GD$Birth_rate)
+#' SynergyMatrix.plot(GD, resp="diffLoewe")
+#' }
+SynergyMatrix.plot<-function(data,resp="diffLoewe",conc1="CONC",conc2="CONC2"){
+  
+  CONC_String<-CONC2_String<-NULL
+  data$CONC_String<-as.character(data[,conc1])
+  data$CONC2_String<-as.character(data[,conc2])
+  colnames(data)[colnames(data)=='diff']='diff_222222'
+  colnames(data)[colnames(data)==resp]='diff'
+  
+  data$CONC_String <- factor(data$CONC_String, levels = as.character(sort(as.numeric(unique(data$CONC_String)))))
+  data$CONC2_String <- factor(data$CONC2_String, levels = as.character(sort(as.numeric(unique(data$CONC2_String)))))
+  
+  plot=ggplot2::ggplot(data=data, ggplot2::aes(x = CONC_String, y = CONC2_String)) + 
+    ggplot2::geom_raster(ggplot2::aes(fill=diff)) + 
+    ggplot2::scale_fill_gradient2(midpoint=0,mid = "#333333",low="#018571",high="#FFCC00","Synergy score")+
+    #ggplot::labs(x="Dactolisib concentration (µM)", y="Trametinib concentration (µM)") +
+    ggplot2::theme(text=element_text(size=9),
+          axis.text=element_text(size=6.5,colour="black"),
+          strip.text=element_text(size=7.5),
+          axis.title=element_text(colour="black"))
+  
+  return(plot)
+  
+}

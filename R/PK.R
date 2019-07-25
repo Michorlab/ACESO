@@ -3,15 +3,15 @@
 NULL
 #' @import methods
 NULL
-#' @import stats
-NULL
-#' @import utils
-NULL
 #' @import drc
 NULL
 #' @importFrom mrgsolve mrgsim param omat ev mcode mread
 NULL
 #' @importFrom minpack.lm nlsLM
+NULL
+#' @import stats
+NULL
+#' @importFrom utils read.csv
 NULL
 
 #' read.PKdata
