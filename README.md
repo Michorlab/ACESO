@@ -11,15 +11,15 @@ We recommend the installation of the development version of mrgsolve package fro
 ```{r}
 devtools::install_github("metrumresearchgroup/mrgsolve")
 ```
-Additionally, a C/C++ compiler is needed as mrgosolves uses code in C to speed up the simulations.
-## Windows:
+Additionally, a C/C++ compiler is needed as mrgsolves uses code in C to speed up the simulations.
+### Windows:
 For Windows users, Rtools is needed to be able to use mrgsolve package. It can be downloaded from https://cran.r-project.org/bin/windows/Rtools/. Select the Rtools download compatible with your R version and check your PATH environment variable in R during the installation process.
 
-## Mac OS X:
+### Mac OS X:
 
 Install C++ and gfortran compilers found here: https://cran.r-project.org/bin/macosx/tools/
 
-## Linux: 
+### Linux: 
 For Debian/Ubuntu, you can install the core software development utilities required for R package development by executing:  
 
 sudo apt-get install r-base-dev texlive-full  
