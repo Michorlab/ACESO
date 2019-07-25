@@ -205,7 +205,7 @@ Type2 <-define.Typei.cells(Ni=1000,birth_rate = 'B2[[1]]',death_rate  = 0.01,mut
 ```
 
 ### Simulate the number of sensitive and resistant cells over time:
-Fist define the dosing schedules for each drug:
+First define the dosing schedules for each drug:
 ```{r}
 #Alpelisib: 300mg/day
 e1 <- ev(amt = 300, ii = 1, addl = 60, time=0)

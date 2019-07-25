@@ -74,7 +74,7 @@ Pext.aprox <- function(t,Text,type_i,i){
     di(tau+t)*exp(int_wi(tau))
   },"tau")
 
-  Q<-integrate(InnerIntegralVec,lower=0,upper=Text-t,t=t,bi=type_i[[i]]@bi,di=type_i[[i]]@di,stop.on.error = F)$value
+  Q<-integrate(InnerIntegralVec,lower=0,upper=Text-t,t=t,bi=type_i[[i]]@bi,di=type_i[[i]]@di,stop.on.error = FALSE)$value
   return(Q/(1+Q))
 }
 

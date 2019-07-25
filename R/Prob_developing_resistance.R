@@ -128,7 +128,7 @@ Prob_resistance.integrate<-function(t,type_0,type_i,N){
 
 Prob_resistance.aprox<-function(t,type_0,type_i,N){
   #ui<-sapply(1:length(type_i),function(x)(type_i[[x]]@ui))
-  int_f0<- approxfun(seq(0,t+1,1), sapply(seq(0,t+1,1),function(x) integrate(f0,lower=0,upper=x,b0=type_0@b0,d0=type_0@d0,subdivisions = 400L,stop.on.error = F)$value))
+  int_f0<- approxfun(seq(0,t+1,1), sapply(seq(0,t+1,1),function(x) integrate(f0,lower=0,upper=x,b0=type_0@b0,d0=type_0@d0,subdivisions = 400L,stop.on.error = FALSE)$value))
 
 
   PrIntegral <- Vectorize(function(t,Text,type_0,type_i,N) {

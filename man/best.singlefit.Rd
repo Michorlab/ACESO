@@ -5,7 +5,7 @@
 \title{best.singlefit}
 \usage{
 best.singlefit(data, resp = "Birth_rate", conc = "CONC",
-  type = "continuous", IC = "AIC", compare = F, ...)
+  type = "continuous", IC = "AIC", compare = FALSE, ...)
 }
 \arguments{
 \item{data}{Concentration-effect dataframe.}

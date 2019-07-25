@@ -29,7 +29,7 @@
 #'En_resistant_cells(N=2,t=100,type_0=Type0,type_i=list(Type1,Type2))
 #' }
 #'
-En_resistant_cells<-function(N,t,type_0,type_i,type_icr=NULL,approximation=T){
+En_resistant_cells<-function(N,t,type_0,type_i,type_icr=NULL,approximation=TRUE){
   if(approximation){
     ni<-En_resistant_cells.aprox(N,t,type_0,type_i,type_icr)
   }else{

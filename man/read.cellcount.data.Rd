@@ -4,7 +4,7 @@
 \alias{read.cellcount.data}
 \title{read.cellcount.data}
 \usage{
-read.cellcount.data(filename, sep = ",", combination = F)
+read.cellcount.data(filename, sep = ",", combination = FALSE)
 }
 \arguments{
 \item{filename}{name of the csv file. string.}

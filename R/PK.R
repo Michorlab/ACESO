@@ -254,7 +254,7 @@ easy.mrgsim=function(model,dosing_schedule=NULL,parameters=NULL,variability=NULL
 #' 
 #' }
 
-Estimate.PK=function(PK_data,x.name="time",y.name="CONC",model,initial_estimates,log.yaxis=F,weighted=F){
+Estimate.PK=function(PK_data,x.name="time",y.name="CONC",model,initial_estimates,log.yaxis=FALSE,weighted=FALSE){
  CP<-NULL
  CONC<-NULL
  

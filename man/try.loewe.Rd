@@ -4,7 +4,7 @@
 \alias{try.loewe}
 \title{Compute the predicted effect under Loewe model}
 \usage{
-try.loewe(d1, d2, model, same.Emax = F)
+try.loewe(d1, d2, model, same.Emax = FALSE)
 }
 \arguments{
 \item{d1}{dose of drug 1}

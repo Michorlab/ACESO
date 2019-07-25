@@ -5,7 +5,7 @@
 \title{Fill the dataset with the predicted effect under Loewe model}
 \usage{
 Loewe(data, resp = "Birth_rate", conc1 = "CONC", conc2 = "CONC2",
-  same.Emax = F, Emax.effect = c("min", "max"))
+  same.Emax = FALSE, Emax.effect = c("min", "max"))
 }
 \arguments{
 \item{data}{input data}

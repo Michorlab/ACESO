@@ -4,7 +4,7 @@
 \alias{modelfit.plot}
 \title{modelfit.plot}
 \usage{
-modelfit.plot(model, linear.model = F, log.x = F,
+modelfit.plot(model, linear.model = FALSE, log.x = FALSE,
   linecol = "firebrick")
 }
 \arguments{

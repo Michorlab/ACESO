@@ -5,7 +5,7 @@
 \title{En_resistant_cells}
 \usage{
 En_resistant_cells(N, t, type_0, type_i, type_icr = NULL,
-  approximation = T)
+  approximation = TRUE)
 }
 \arguments{
 \item{N}{Number of different resistant cell types}

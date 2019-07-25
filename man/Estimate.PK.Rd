@@ -5,7 +5,7 @@
 \title{Estimate.PK}
 \usage{
 Estimate.PK(PK_data, x.name = "time", y.name = "CONC", model,
-  initial_estimates, log.yaxis = F, weighted = F)
+  initial_estimates, log.yaxis = FALSE, weighted = FALSE)
 }
 \arguments{
 \item{PK_data}{Data to fit (drug concentrations over time)}

@@ -2,7 +2,7 @@
 #' @import gridExtra
 NULL
 
-check_controls=function(dtdata,combination=F){
+check_controls=function(dtdata,combination=FALSE){
   Control<-Viable.cells<-CONC<-Cell.line<-Type<-Time<-Replicate<-CONC2<-NULL
   . <- "callate"
   # Is there a replicate column?
@@ -57,7 +57,7 @@ check_controls=function(dtdata,combination=F){
 #' @param combination boolean argument to specify if the file has drug combination data, that is, more that one drug concentration column. Default to FALSE.
 #' @return A dataframe with the relevant information about the cell viability assay.
 #' @export
-read.cellcount.data=function(filename,sep=",",combination=F){
+read.cellcount.data=function(filename,sep=",",combination=FALSE){
   Cell_Count_0<-Viable.cells<-Time<-Cell.line<-Type<-Replicate<-NULL
   . <- "callate"
   dataset=read.csv(filename,header=T,na='.',sep=sep)

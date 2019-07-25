@@ -78,8 +78,8 @@ En_resistant_cells_i.aprox<-function(t,type_0,type_i,i,type_icr=NULL){
   if(is.null(type_icr)) ui_cr=0
   else{ui_cr=type_icr@ui_cr}
   #ui<-sapply(1:length(type_i),function(x)(type_i[[x]]@ui))
-  int_f0<- approxfun(seq(0,t+1,1), sapply(seq(0,t+1,1),function(x) integrate(f0,lower=0,upper=x,b0=type_0@b0,d0=type_0@d0, subdivisions = 400L,stop.on.error = F)$value))
-  int_fi<- approxfun(seq(0,t+1,1), sapply(seq(0,t+1,1),function(x) integrate(fi,lower=0,upper=x,bi=type_i[[i]]@bi,di=type_i[[i]]@di,subdivisions = 400L,stop.on.error = F)$value))
+  int_f0<- approxfun(seq(0,t+1,1), sapply(seq(0,t+1,1),function(x) integrate(f0,lower=0,upper=x,b0=type_0@b0,d0=type_0@d0, subdivisions = 400L,stop.on.error = FALSE)$value))
+  int_fi<- approxfun(seq(0,t+1,1), sapply(seq(0,t+1,1),function(x) integrate(fi,lower=0,upper=x,bi=type_i[[i]]@bi,di=type_i[[i]]@di,subdivisions = 400L,stop.on.error = FALSE)$value))
 
   InnerIntegral = function(y,ui,type_0,i){
     n0=type_0@N0*exp(int_f0(y))
@@ -88,6 +88,6 @@ En_resistant_cells_i.aprox<-function(t,type_0,type_i,i,type_icr=NULL){
 
   ni<- (type_i[[i]]@Ni +
           integrate(Vectorize(InnerIntegral,"y") , subdivisions = 400L,
-                    lower=0, upper=t,ui=type_i[[i]]@ui,type_0=type_0,i=i,stop.on.error = F)$value)/exp(-int_fi(t))
+                    lower=0, upper=t,ui=type_i[[i]]@ui,type_0=type_0,i=i,stop.on.error = FALSE)$value)/exp(-int_fi(t))
   return(ni)
 }

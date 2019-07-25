@@ -5,7 +5,7 @@
 \title{Multiple.singlefit}
 \usage{
 Multiple.singlefit(data, resp = "Birth_rate", conc = "CONC",
-  fct = drc::LL.4(), linear.model = F, log.x = F, ...)
+  fct = drc::LL.4(), linear.model = FALSE, log.x = FALSE, ...)
 }
 \arguments{
 \item{data}{Concentration-response dataframe.}

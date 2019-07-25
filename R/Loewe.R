@@ -29,7 +29,7 @@ resLoewe <- function(a, b, EmaxA, EmaxB, E0A, E0B, nA, nB, EC50A, EC50B){
 #' @export
 #'
 #' @examples NULL
-try.loewe <- function(d1, d2, model,same.Emax=F){
+try.loewe <- function(d1, d2, model,same.Emax=FALSE){
   loewe.E0.Emax <- function(d1, d2, model){
     resLoewe(d1, d2, EmaxA = model[3], EmaxB = model[3],
              E0A = model[4], E0B = model[4],
@@ -88,7 +88,7 @@ try.loewe.separate.models <- function(d1, d2, mod1, mod2){
 #' plot.ResponseSurface(rmap,xl="[Dactolisib] (µM)",yl="[Trametinib] (µM)",
 #' zl="Birth rate of \n sensitive cells (1/h)",title="Loewe")
 #' }
-Loewe<-function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',same.Emax=F,Emax.effect=c('min','max')){
+Loewe<-function(data,resp='Birth_rate',conc1='CONC',conc2='CONC2',same.Emax=FALSE,Emax.effect=c('min','max')){
   
   variable<-NULL
   data$loewe_additivity=NULL

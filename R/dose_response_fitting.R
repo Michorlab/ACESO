@@ -61,7 +61,7 @@ curve.fit=function(data,resp="Birth_rate",conc='CONC',fct=drc::LL.4(),...){
 #' # use the compare argument of the function:
 #' best.singlefit(AU565_dataset,resp="Viable.cells",conc="CONC",compare=T)
 #' }
-best.singlefit=function(data,resp="Birth_rate",conc='CONC',type='continuous',IC='AIC',compare=F, ...){
+best.singlefit=function(data,resp="Birth_rate",conc='CONC',type='continuous',IC='AIC',compare=FALSE, ...){
 
   if(conc!='CONC') colnames(data)[colnames(data)=='CONC']='CONC_2'
   colnames(data)[colnames(data)==conc]='CONC'
@@ -145,7 +145,7 @@ linear.fit=function(data,resp="Birth_rate",conc="CONC",...){
 #' modelfit.plot(fit)
 #' modelfit.plot(fit,log.x=F)
 #' }
-modelfit.plot=function(model, linear.model=F,log.x=F,linecol='firebrick'){
+modelfit.plot=function(model, linear.model=FALSE,log.x=FALSE,linecol='firebrick'){
   CONC<-x<-y<-NULL
   fitdata=model$data
   effect=colnames(fitdata)[2]
@@ -201,7 +201,7 @@ modelfit.plot=function(model, linear.model=F,log.x=F,linecol='firebrick'){
 #' 
 #' Multiple.singlefit(growth_data,resp="Net_growth",conc="CONC",fct=drc::LL.4(),log.x=T)
 #' }
-Multiple.singlefit=function(data,resp="Birth_rate",conc='CONC',fct=drc::LL.4(),linear.model=F,log.x=F,...){
+Multiple.singlefit=function(data,resp="Birth_rate",conc='CONC',fct=drc::LL.4(),linear.model=FALSE,log.x=FALSE,...){
 
   Type<-NULL
   Cell.line<-NULL
@@ -225,7 +225,7 @@ Multiple.singlefit=function(data,resp="Birth_rate",conc='CONC',fct=drc::LL.4(),l
     datacl=subset(data,Cell.line==i)
     for(j in unique(datacl$Type)){
       datacltype=subset(datacl,Type==j)
-      if(linear.model==F){
+      if(linear.model==FALSE){
         fit=curve.fit(data=datacltype,fct=fct,resp=resp,conc=conc,...)
         fit$Type=j
         fit$Cell.line=i
