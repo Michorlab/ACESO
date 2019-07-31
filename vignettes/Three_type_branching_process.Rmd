@@ -19,10 +19,10 @@ knitr::opts_chunk$set(
   warnings= FALSE
 )
 ```
-Let us consider the three-type birth-death process shown in Figure 2. This model is
+Let us consider the three-type birth-death process shown in Figure 1. This model is
 extensively used in investigating the dynamics of tumor cells in response to treatment, where a population initially sensitive to therapy will gain resistance via mutation and expand at a different rate. In this example, the sensitive cell type (type 0, blue) is sensitive to both drugs A and B and proliferates and dies with rate b0 and d0 respectively. Type 0 cells are able to mutate to give two different cell types, type 1 (green) and 2 (orange) which will be resistant to one of the drugs. 
 
-![Figure 2. Three type branching process.](3type_branching.jpg)
+![Figure 1. Three type branching process.](3type_branching.jpg)
 
 Load libraries:
 ```{r}
@@ -117,13 +117,13 @@ ResponseSurface.plot(rmap,xl=paste0("[",DrugA,"] (µM)"),
 ```
 
 ## Sensitive cell model fitting
-Birth rate parameters were fitted nonparametrically using a Generalized Additive Model (GAM) to generate the predicted surface required for the simulation of the evolutionary process:
+Birth rate parameters were fitted non-parametrically using a Generalized Additive Model (GAM) to generate the predicted surface required for the simulation of the evolutionary process:
 ```{r}
 gam.model=Multiple.resp.surface.fit(GD, title=", GAM",Drug1.name=paste0("[",DrugA,"] (µM)"),Drug2.name=paste0("[",DrugB,"] (µM)"))
 ```
 
 ## Dynamics of resistant cells:
-In the HMS LINCS database there is no information about resistant cell lines for these drugs, even so, we create the data to evaluate the dynamics of Type 1 (resistant to trametinib) and Type 2 (resistant to alpelisib) cells to show a more complete example of the type of analysis that can be conducted using ACESO.
+In the HMS LINCS database there is no information about resistant cell lines for these drugs, even so, we created the data to evaluate the dynamics of Type 1 (resistant to trametinib) and Type 2 (resistant to alpelisib) cells to show a more complete example of the analysis that can be conducted using ACESO.
 
 Let's start analyzing the dynamics of alpelisib-sensitive/trametinib-resistant cell type (Type 1).
 ```{r}
@@ -157,7 +157,7 @@ B2=Multiple.best.singlefit(data=Trametinib_sensitive,resp='Birth_rate',conc = "C
 B2
 ```
 
-If the user wants to check all the models that has been compared for a particupar type of cells, **best.singlefit** can be used. Here we are going to check all the models tested for the birth rates of the alpelisib-resistant cell line (Type=2):
+If the user wants to check all the models that have been compared for a particupar cell type, **best.singlefit** can be used. With the following code, we check all the models tested for the birth rates of the alpelisib-resistant cell line (Type=2):
 ```{r}
 best.singlefit(Trametinib_sensitive,resp="Birth_rate",conc = "CONC2",compare=T)
 ```
@@ -195,7 +195,7 @@ For the resistant cell types, an additional argument is needed:
 
 * mutation_rate: Numeric or function specifying the mutation rates for the cell type defined.
 
-To start with our simulations, we will define a inial number of 10^6 sensitive cells and 1000 resistant cells o each type. The mutation rate is equal to 10^-7.
+To start with our simulations, we will define a initial number of 10^6 sensitive cells and 1000 resistant cells of each type. The mutation rate is equal to 10^-7.
 ```{r}
 Type0 <-define.Type0.cells(N0=10^6,birth_rate = 'gam.model[[1]]',death_rate= 0.03,scale=24,pk.function = c('pk1','pk2'))
 
@@ -204,7 +204,7 @@ Type1 <-define.Typei.cells(Ni=1000,birth_rate = 'B1[[1]]',death_rate  = 0.015,mu
 Type2 <-define.Typei.cells(Ni=1000,birth_rate = 'B2[[1]]',death_rate  = 0.01,mutation_rate=10^-7,scale=24,pk.function='pk2')
 ```
 
-### Simulate the number of sensitive and resistant cells over time:
+### Calculate the number of sensitive and resistant cells over time:
 First define the dosing schedules for each drug:
 ```{r}
 #Alpelisib: 300mg/day
