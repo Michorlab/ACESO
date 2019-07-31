@@ -30,6 +30,7 @@ ACESO is very flexible when defining functions and allows use of other packages 
 
 ![Figure 2. Typical Workflow (single-drug).](diagram.png)
 
+
 Load libraries:
 ```{r}
 library(ACESO)
@@ -40,7 +41,7 @@ library(ggplot2)
 
 Use **read.cellcount.data** function to create a data.frame with the info about cell proliferation under different drug concentrations.
 
-Mandatory columns to be in the .csv file: 
+Mandatory columns for in the .csv file: 
 
 * Viable.cells: cell count data
 * Time: time point
@@ -104,13 +105,15 @@ ggplot(cell_death[cell_death$Time!=0,])+
 ```
 
 ### Calculate net growth rate from cell proliferation data:
-We assume an exponential growth to calculate the net growth rate and decided not to use the data corresponding to time = 0 to calculate those rates:
+In order to calculate the net growth of each cell type, we perform a linear regression on log-transformed viable cells over time as we assume an exponentially growing population of cells. In this exercise, we decided not to use the data corresponding to time = 0 to calculate those rates.
+
+(NOTE: Why not use data at time = 0? Also, I had to multiple cell count by 10 to get the Net_growth given. Did I do something wrong?) :
 ```{r}
 growth_data<-net_growth_rate(growth_data,time0_data = F)
 head(growth_data) #See the values in Net_growth column
 ```
 ### Calculate death rate:
-Use the data from cell apoptosis assays and the data where the net growth rate parameters have been calculated  to compute the death rate parameter. Call **calculate_death_rate** for this purpose. You must also specify the column name where the apoptotic cell count or the apoptotic cell fraction is stored, and finally specify if this column stores a fraction or the total counts by setting the argument 'Apoptotitic.franction' to TRUE or FALSE.
+Use the data from cell apoptosis assays and the data where the net growth rate parameters have been calculated  to compute the death rate parameter. Call **calculate_death_rate** for this purpose. You must also specify the column name where the apoptotic cell count or the apoptotic cell fraction is stored, and finally specify if this column stores a fraction or the total counts by setting the argument 'Apoptotic.fraction' to TRUE or FALSE.
 ```{r}
 all.data=calculate_death_rate(net_growth_data=growth_data,cell_death_data =cell_death, column.name = "Apoptotic.fraction",Apoptotic.fraction = T)
 ```
@@ -138,7 +141,7 @@ DR.fit=Multiple.best.singlefit(all.data,resp="Death_rate")
 DR.fit
 ```
 
-If the user wants to check all the models that has been compared for a particupar type of cells, **best.singlefit** can be used. Here we are going to check all the models tested for the birth rates of the resistant cell line (Type=1):
+If the user wants to check all the models that has been compared for a particular cell type, **best.singlefit** can be used. Here we are going to check all the models tested for the birth rates of the resistant cell line (Type=1):
 
 ```{r}
 best.singlefit(all.data[all.data$Type==1,],resp="Birth_rate",compare=T)
@@ -160,7 +163,7 @@ B1.fit=Multiple.singlefit(all.data[all.data$Type==1,],resp="Birth_rate",linear.m
 ```
 
 ## Pharmacokinetics
-Now we need to define the pharmacokinetics of the drug. We use mrgsolve package to simulate the chosen pk model. 
+Now we need to define the pharmacokinetics (PK) of the drug. To this end, we use the PK model developed by Lu et al. 2016 (\url{https://doi.org/10.1016/j.clpt.2006.04.007}) and the mrgsolve package to simulate the chosen model. 
 
 We select a 1 compartment model with extravascular administration. Read the model: 
 ```{r}
@@ -180,7 +183,7 @@ param(cmt1_ev)
 * F: Bioavailability
 * ALAG: Lag time
 
-Change parameter values:
+Change parameter values to the ones defined in the original publication:
 
 ```{r}
 newpar <-  list('TVCL' = 3.95, #L/h
@@ -234,7 +237,8 @@ pk2=function(t, Cp0,k, time_interval,time_first_dose=0){
 Additionally, a csv with pharmacokinetic data can be uploaded to fit a curve selecting one of the pk models from the model library. Use **Estimate.PK** function for this purpose (see the help function for an example). For complex pk models or data, we recommend the use of NONMEM, MONOLIX or other parameter estimation software.
 
 ### Define sensitive and resistant cells 
-We need to define the sensitive (Type 0) and resistant cells (Type 1) to perfom the simulations. 
+We need to define the sensitive (Type 0) and resistant cells (Type 1) to perfom the simulations.
+
 To define cell types the following arguments are needed:
 
 * N0: initial cell population.
@@ -246,7 +250,7 @@ To define cell types the following arguments are needed:
 For the resistant cell types, an additional argument is needed:
 * mutation_rate: Numeric or function specifying the mutation rates for the cell type defined.
 
-We will use the previously fitted functions for the birth rates and constant values for the death rates as the variation of death rate values for the different drug concentrations is very low. 
+We will use the previously fitted functions for the birth rates and constant values for the death rates as the variation of death rate values for the different drug concentrations is very low. We assume the population begins with 10^6 sensitive cells and no resistant cells.
 
 ```{r}
 Type0 <-define.Type0.cells(N0=10^6,birth_rate = 'BR.fit[[1]]',death_rate= 0.0085,scale=24,pk.function = 'pk')
@@ -261,8 +265,8 @@ To see how the birth rate of the cells change over time due to the pharmacokinet
 plot(seq(0,30,0.1),Type0@b0(seq(0,30,0.1)),type='l',xlab='Time',ylab='b0')
 plot(seq(0,30,0.1),Type1@bi(seq(0,30,0.1)),type='l',xlab='Time',ylab='b1')
 ```
-### Simulate the number of sensitive cells over time:
-In order to simulate the number of sensitive cells over time use **EN_type0_cells** function with the following arguments:
+### Calculate the expected number of sensitive cells over time:
+In order to calculate the expected number of sensitive cells over time use **EN_type0_cells** function with the following arguments:
 * t: time (numeric).
 * type_0: Type-0 S4 object with the information of the sensitive cell population.
 * ui: mutation rate of the resistant population (numeric).
@@ -277,8 +281,8 @@ This function gave us the number of sensitive cells at 10 days. To do this for a
 sapply(seq(0,30,1),function(i){ EN_type0_cells(t=i,type_0=Type0,ui=c(Type1@ui))})
 ```
 
-### Simulate the number of resistant cells and probability of resistance
-In order to simulate the number of resistant cells, use **En_resistant_cells_i** function with the following arguments:
+### Calculate the number of resistant cells and probability of resistance
+In order to calculate the expected number of resistant cells, use **En_resistant_cells_i** function with the following arguments:
 
 * N: the total number of the resistant cell types.
 * t: time 
@@ -295,7 +299,7 @@ To do this for a vector of different times:
 sapply(c(0,2,4,8),function(i){En_resistant_cells(N=1,t=i,type_0=Type0,type_i=list(Type1))})
 
 ```
-To simulate the probability of resistance use **Prob_resistance** function with the following arguments:
+To calculate the probability of resistance use **Prob_resistance** function with the following arguments:
 
 * t: time of production of a resistant cell clone
 * type_0: Type-0 S4 object
