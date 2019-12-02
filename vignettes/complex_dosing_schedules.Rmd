@@ -1,5 +1,5 @@
 ---
-title: "Complex dosing schedules"
+title: "Demo 3: Complex dosing schedules"
 author: "Itziar Irurzun Arana"
 date: "`r Sys.Date()`"
 output:  

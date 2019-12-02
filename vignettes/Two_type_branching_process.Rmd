@@ -1,5 +1,5 @@
 ---
-title: "Two type branching process"
+title: "Demo 1: Two type branching process"
 author: "Itziar Irurzun Arana"
 date: "`r Sys.Date()`"
 output:  
@@ -24,11 +24,11 @@ As a simple example that demonstrates the necessary steps for an analysis of a s
 we consider the two-type birth-death process shown in Figure 1. This model is
 extensively used in investigating the dynamics of tumor cells in response to treatment, where a population initially sensitive to therapy will gain resistance via mutation and expand at a different rate. In this example, we evaluate erlotinib treatment and how erlotinib-sensitive (Type 0 cells, blue in the figure) and erlotinib-resistant (Type 1 cell, green) cell birth and death rates are defined using PC-9 cell viability and apoptosis assay data, how the pharmacokinetics of erlotinib can be defined to evaluate its effect of the growth kinetics of each cell type and finally, how the evolution of these cells over time can be calculated using ACESO package.
 
-![Figure 1. Two type branching process.](2type_branching.jpg)
+![Two type branching process.](2type_branching.jpg){width=300px}
 
 ACESO is very flexible when defining functions and allows use of other packages for estimation throughout, but the general workflow for the process is used in the analysis and summarized by the following diagram:
 
-![Figure 2. Typical Workflow (single-drug).](diagram.png)
+![Typical Workflow (single-drug).](diagram.png){width=400px}
 
 
 Load libraries:
