@@ -1,7 +1,7 @@
 ---
 title: "Demo 4: Synergy assesment"
 author: "Itziar Irurzun Arana"
-date: "`r Sys.Date()`"
+#date: "`r Sys.Date()`"
 output:  
   prettydoc::html_pretty:
     theme: cayman 

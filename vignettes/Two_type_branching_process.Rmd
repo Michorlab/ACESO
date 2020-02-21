@@ -1,7 +1,7 @@
 ---
 title: "Demo 1: Two type branching process"
-author: "Itziar Irurzun Arana"
-date: "`r Sys.Date()`"
+#author: "Itziar Irurzun Arana"
+#date: "`r Sys.Date()`"
 output:  
   prettydoc::html_pretty:
     theme: cayman 
@@ -54,7 +54,8 @@ Optional columns:
 * Type: numerical column specifiying the cell type (0: sensitive cells, 1: resistant cell to drug A, etc.). If missing the program assumes Type=0.
 
 ```{r}
-growth_data=read.cellcount.data(system.file("extdata", "cell_viability_assay.txt", package = "ACESO"), sep=";")
+growth_data=read.cellcount.data(system.file("extdata", "cell_viability_assay.txt", 
+                                            package = "ACESO"), sep=";")
 head(growth_data)
 ```
 Two new columns are created:
@@ -67,7 +68,9 @@ Two new columns are created:
 #Exploraty plot:  viable cells over time
 library(ggplot2)
 ggplot(data=growth_data,aes(x=Time,y=Viable.cells,col=factor(CONC)))+geom_point()+
-  geom_smooth(se=F,method="lm")+facet_wrap(~Type)+scale_y_continuous(trans="log")+ylab("Viable cells (log scale)")+scale_colour_discrete(name="Dose (µM)")
+  geom_smooth(se=F,method="lm")+facet_wrap(~Type)+
+  scale_y_continuous(trans="log")+ylab("Viable cells (log scale)")+
+  scale_colour_discrete(name="Dose (µM)")
 ```
 
 ### Read cell death file:
