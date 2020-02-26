@@ -2,16 +2,15 @@
 title: "Demo 2: Three type branching process"
 #author: "Itziar Irurzun Arana"
 #date: "`r Sys.Date()`"
-output:  pdf_document
-#  prettydoc::html_pretty:
-#    theme: cayman 
-#    highlight: github
+output:  #pdf_document
+   prettydoc::html_pretty:
+    theme: cayman 
+    highlight: github
 vignette: >
   %\VignetteIndexEntry{Three type branching process}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
- \pagenumbering{gobble}
  
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -23,7 +22,7 @@ knitr::opts_chunk$set(
 Let us consider the three-type birth-death process shown in Figure 1. This model is
 extensively used in investigating the dynamics of tumor cells in response to treatment, where a population initially sensitive to therapy will gain resistance via mutation and expand at a different rate. In this example, the sensitive cell type (type 0, blue) is sensitive to both drugs A and B and proliferates and dies with rate b0 and d0 respectively. Type 0 cells are able to mutate to give two different cell types, type 1 (green) and 2 (orange) which will be resistant to one of the drugs. 
 
-![Three type branching process.](3type_branching.png){width="360px"}
+![Three type branching process.](3type_branching.jpg){width=400px}
 
 
 
