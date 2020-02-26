@@ -2,7 +2,8 @@
 title: "Demo 1: Two type branching process"
 #author: "Itziar Irurzun Arana"
 #date: "`r Sys.Date()`"
-output:  
+# \pagenumbering{gobble} (poner mas abajo)
+output: #pdf_document
   prettydoc::html_pretty:
     theme: cayman 
     highlight: github
@@ -11,6 +12,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -83,7 +85,8 @@ Necessary columns to be in the .csv file:
 * column.name:  name of the column where the fraction of dead cells or the total count of dead cells is stored.
 * CONC: drug concentration
 ```{r}
-cell_death=read.celldeath.file(system.file("extdata", "apoptosis_assay.txt", package = "ACESO"), column.name="Apoptotic.fraction",sep=";")
+cell_death=read.celldeath.file(system.file("extdata", "apoptosis_assay.txt", package = "ACESO"),
+                               column.name="Apoptotic.fraction",sep=";")
 head(cell_death)
 ```
 Exploratory plot:
@@ -98,12 +101,18 @@ my_sum <- cell_death %>%
   )
 
 ggplot(cell_death[cell_death$Time!=0,])+
-  geom_bar(data=my_sum[my_sum$Time!=0,],aes(x=as.factor(Time), y=mean,fill=as.factor(CONC),color=as.factor(CONC)), stat="identity", alpha=0.7, position=position_dodge(0.9)) +
-  geom_jitter(aes(x=as.factor(Time), y=Apoptotic.fraction,color=as.factor(CONC)), size=0.9, position=position_dodge(0.9))+
+  geom_bar(data=my_sum[my_sum$Time!=0,],
+           aes(x=as.factor(Time), y=mean,fill=as.factor(CONC),color=as.factor(CONC)), 
+           stat="identity", alpha=0.7, position=position_dodge(0.9)) +
+  geom_jitter(aes(x=as.factor(Time), y=Apoptotic.fraction,color=as.factor(CONC)), size=0.9, 
+              position=position_dodge(0.9))+
   facet_wrap(~factor(Type2,levels=c("sensitive","resistant")))+
   xlab("Time (hours)")+ylab("Fraction of death cells")+
-  geom_errorbar(data=my_sum[my_sum$Time!=0,], aes(x=as.factor(Time), ymin=mean-sd, ymax=mean+sd,color=as.factor(CONC)),width=.2, position=position_dodge(0.9))+
-  theme_bw()+scale_color_brewer(name="Erlotinib concentration (µM)",palette="Spectral")+scale_fill_brewer(name="Erlotinib concentration (µM)",palette="Spectral")+
+  geom_errorbar(data=my_sum[my_sum$Time!=0,], 
+                aes(x=as.factor(Time), ymin=mean-sd, ymax=mean+sd,color=as.factor(CONC)),
+                width=.2, position=position_dodge(0.9))+
+  theme_bw()+scale_color_brewer(name="Erlotinib concentration (µM)",palette="Spectral")+
+  scale_fill_brewer(name="Erlotinib concentration (µM)",palette="Spectral")+
   theme(text = element_text(size=14))+theme(legend.position="top") 
 ```
 
@@ -114,16 +123,19 @@ In order to calculate the net growth of each cell type, we perform a linear regr
 ```{r}
 growth_data<-net_growth_rate(growth_data,time0_data = F)
 head(growth_data) #See the values in Net_growth column
+
 ```
 ### Calculate death rate:
 Use the data from cell apoptosis assays and the data where the net growth rate parameters have been calculated  to compute the death rate parameter. Call **calculate_death_rate** for this purpose. You must also specify the column name where the apoptotic cell count or the apoptotic cell fraction is stored, and finally specify if this column stores a fraction or the total counts by setting the argument 'Apoptotic.fraction' to TRUE or FALSE.
 ```{r}
-all.data=calculate_death_rate(net_growth_data=growth_data,cell_death_data =cell_death, column.name = "Apoptotic.fraction",Apoptotic.fraction = T)
+all.data=calculate_death_rate(net_growth_data=growth_data,cell_death_data =cell_death, 
+                              column.name = "Apoptotic.fraction",Apoptotic.fraction = T)
 ```
 
 Plot the resulting death and birth rates for each cell type:
 ```{r}
-ggplot(all.data,aes(x=CONC,y=Death_rate))+geom_point()+scale_y_continuous(limits = c(0, 0.05))+facet_wrap(~Type)+ylab("Death rates (1/h)")+xlab("Drug concentration (µM)")
+ggplot(all.data,aes(x=CONC,y=Death_rate))+geom_point()+scale_y_continuous(limits = c(0, 0.05))+
+  facet_wrap(~Type)+ylab("Death rates (1/h)")+xlab("Drug concentration (µM)")
 
 ggplot(all.data,aes(x=CONC,y=Birth_rate))+geom_point()+facet_wrap(~Type)+
   ylab("Birth rates (1/h)")+xlab("Drug concentration (µM)")
@@ -210,20 +222,24 @@ easy.mrgsim(model=cmt1_ev,dosing_schedule=e1,delta=0.1,tend=48,parameters = newp
 Now we are going to simulate a continuous daily dosing of 150mg for a month. For this we will change the dosing event but also de parameter values to have them in day units instead of hours:
 ```{r}
 e2 <-  ev(amt = 150, ii = 1, addl = 30, time=0) #150 mg every day for 30 days
-easy.mrgsim(model=cmt1_ev,dosing_schedule=e2,delta=0.1,tend=30,parameters = list(TVCL=3.95*24,TVV=233,TVKA=0.95*24)) %>% plot(scales=list(cex=1.5))
+easy.mrgsim(model=cmt1_ev,dosing_schedule=e2,delta=0.1,tend=30,
+            parameters = list(TVCL=3.95*24,TVV=233,TVKA=0.95*24)) %>% plot(scales=list(cex=1.5))
 
 ```
 
 To change the concentration units from mg/L to microM use the scale argument:
 ```{r}
-easy.mrgsim(model=cmt1_ev,dosing_schedule=e2,delta=0.1,tend=30,parameters = list(TVCL=3.95*24,TVV=233,TVKA=0.95*24),scale=1000/429.9) %>% plot(scales=list(cex=1.5))
+easy.mrgsim(model=cmt1_ev,dosing_schedule=e2,delta=0.1,tend=30,
+            parameters = list(TVCL=3.95*24,TVV=233,TVKA=0.95*24),scale=1000/429.9) %>% 
+plot(scales=list(cex=1.5))
 
 ```
 To simulate more complex dosing regimens, there is a vignette available in ACESO.
 
 If the user is happy with the simulated pk model, then we need to define a pk function to be used during the simulation:
 ```{r}
-pk=pk.function(model=cmt1_ev,dosing_schedule=e2,tend=30,parameters = list(TVCL=3.95*24,TVV=233,TVKA=0.95*24),scale=1000/429.9)
+pk=pk.function(model=cmt1_ev,dosing_schedule=e2,tend=30,
+               parameters = list(TVCL=3.95*24,TVV=233,TVKA=0.95*24),scale=1000/429.9)
 ```
 
 If the user doesn't want to use mrgsolve to define the pk model, he/she can define his/her own function.
@@ -256,11 +272,13 @@ For the resistant cell types, an additional argument is needed:
 We will use the previously fitted functions for the birth rates and constant values for the death rates as the variation of death rate values for the different drug concentrations is very low. We assume the population begins with 10^6 sensitive cells and no resistant cells.
 
 ```{r}
-Type0 <-define.Type0.cells(N0=10^6,birth_rate = 'BR.fit[[1]]',death_rate= 0.0085,scale=24,pk.function = 'pk')
+Type0 <-define.Type0.cells(N0=10^6,birth_rate = 'BR.fit[[1]]',death_rate= 0.0085,scale=24,
+                           pk.function = 'pk')
 #The function returns a S4 object with all the information gathered together.
 Type0
 #For resistant cells and additional argument is needed: mutation_rate
-Type1 <-define.Typei.cells(Ni=0,birth_rate = 'B1.fit[[1]]',death_rate  = 0.0035,mutation_rate=10^-8,scale=24, pk.function = 'pk')
+Type1 <-define.Typei.cells(Ni=0,birth_rate = 'B1.fit[[1]]',death_rate  = 0.0035, mutation_rate=10^-8,
+                           scale=24, pk.function = 'pk')
 ```
 
 To see how the birth rate of the cells change over time due to the pharmacokinetics of the drug:

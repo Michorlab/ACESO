@@ -1,8 +1,8 @@
 ---
 title: "Demo 3: Complex dosing schedules"
-author: "Itziar Irurzun Arana"
+#author: "Itziar Irurzun Arana"
 #date: "`r Sys.Date()`"
-output:  
+output:  #pdf_document
   prettydoc::html_pretty:
     theme: cayman 
     highlight: github

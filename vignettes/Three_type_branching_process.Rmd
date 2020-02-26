@@ -1,17 +1,18 @@
 ---
 title: "Demo 2: Three type branching process"
-author: "Itziar Irurzun Arana"
+#author: "Itziar Irurzun Arana"
 #date: "`r Sys.Date()`"
-output:  
-  prettydoc::html_pretty:
-    theme: cayman 
-    highlight: github
+output:  pdf_document
+#  prettydoc::html_pretty:
+#    theme: cayman 
+#    highlight: github
 vignette: >
   %\VignetteIndexEntry{Three type branching process}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+ \pagenumbering{gobble}
+ 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -22,7 +23,9 @@ knitr::opts_chunk$set(
 Let us consider the three-type birth-death process shown in Figure 1. This model is
 extensively used in investigating the dynamics of tumor cells in response to treatment, where a population initially sensitive to therapy will gain resistance via mutation and expand at a different rate. In this example, the sensitive cell type (type 0, blue) is sensitive to both drugs A and B and proliferates and dies with rate b0 and d0 respectively. Type 0 cells are able to mutate to give two different cell types, type 1 (green) and 2 (orange) which will be resistant to one of the drugs. 
 
-![Figure 1. Three type branching process.](3type_branching.jpg){width=400px}
+![Three type branching process.](3type_branching.png){width="360px"}
+
+
 
 Load libraries:
 ```{r}
@@ -63,7 +66,8 @@ head(growth_data)
 ```
 Plot the results:
 ```{r}
-ggplot(data=growth_data,aes(x=(CONC),y=Net_growth,col=factor(CONC2)))+geom_point()+geom_line(linetype="dashed")+
+ggplot(data=growth_data,aes(x=(CONC),y=Net_growth,col=factor(CONC2)))+geom_point()+
+  geom_line(linetype="dashed")+
   theme(text = element_text(size=14))+xlab(paste0("[",DrugA,"] (µM)"))+
   scale_colour_discrete(name=paste0("[",DrugB,"] (µM)"))+
   theme_classic()+ylab("Net growth (1/h)")+theme(text = element_text(size=14))
@@ -81,10 +85,12 @@ d0
 We use the **net_growth_rate** function again, not only to calculate the net growth rate parameter of the cells but also the birth and death rates. To this end, we introduce the newly calculated d0 value:
 ```{r}
 growth_data<-net_growth_rate(growth_data,death_rate = d0)
-ggplot(data=growth_data,aes(x=(CONC),y=Birth_rate,col=factor(CONC2)))+geom_point()+geom_line(linetype="dashed")+
+ggplot(data=growth_data,aes(x=(CONC),y=Birth_rate,col=factor(CONC2)))+
+  geom_point()+geom_line(linetype="dashed")+
   theme(text = element_text(size=14))+xlab(paste0("[",DrugA,"] (µM)"))+
   scale_colour_discrete(paste0("[",DrugB,"] (µM)"))+
-  theme_classic()+ylab("Birth rate of \n sensitive cells, b0 (1/h)")+theme(text = element_text(size=14))
+  theme_classic()+ylab("Birth rate of \n sensitive cells, b0 (1/h)")+
+  theme(text = element_text(size=14))
 
 ```
 
@@ -119,7 +125,8 @@ ResponseSurface.plot(rmap,xl=paste0("[",DrugA,"] (µM)"),
 ## Sensitive cell model fitting
 Birth rate parameters were fitted non-parametrically using a Generalized Additive Model (GAM) to generate the predicted surface required for the simulation of the evolutionary process:
 ```{r}
-gam.model=Multiple.resp.surface.fit(GD, title=", GAM",Drug1.name=paste0("[",DrugA,"] (µM)"),Drug2.name=paste0("[",DrugB,"] (µM)"))
+gam.model=Multiple.resp.surface.fit(GD, title=", GAM",Drug1.name=paste0("[",DrugA,"] (µM)"),
+                                    Drug2.name=paste0("[",DrugB,"] (µM)"))
 ```
 
 ## Dynamics of resistant cells:
@@ -177,7 +184,8 @@ see(cmt2_oral)
 Simulate the drug concentration profile for trametinib when a 2mg dose is given every day for a month:
 ```{r}
 e2 <- ev(amt = 2, time=0, ii=1, addl=30)
-easy.mrgsim(model=cmt2_oral,dosing_schedule=e2,delta=0.1,tend=30,parameters = list(TVCL=4.91*24,TVV=214,TVKA=2.05*24,Vp=568,Q=60*24),scale=1000/615.4,Req="CP") %>% plot(scales=list(cex=1.5))
+easy.mrgsim(model=cmt2_oral,dosing_schedule=e2,delta=0.1,tend=30,parameters = list(TVCL=4.91*24,TVV=214,TVKA=2.05*24,Vp=568,Q=60*24),scale=1000/615.4,Req="CP") %>% 
+  plot(scales=list(cex=1.5))
 ```
 
 ## Define all the cell types:
@@ -197,11 +205,14 @@ For the resistant cell types, an additional argument is needed:
 
 To start with our simulations, we will define a initial number of 10^6 sensitive cells and 1000 resistant cells of each type. The mutation rate is equal to 10^-7.
 ```{r}
-Type0 <-define.Type0.cells(N0=10^6,birth_rate = 'gam.model[[1]]',death_rate= 0.03,scale=24,pk.function = c('pk1','pk2'))
+Type0 <-define.Type0.cells(N0=10^6,birth_rate = 'gam.model[[1]]',death_rate= 0.03,scale=24,
+                           pk.function = c('pk1','pk2'))
 
-Type1 <-define.Typei.cells(Ni=1000,birth_rate = 'B1[[1]]',death_rate  = 0.015,mutation_rate=10^-7,scale=24,pk.function='pk1')
+Type1 <-define.Typei.cells(Ni=1000,birth_rate = 'B1[[1]]',death_rate  = 0.015,mutation_rate=10^-7,
+                           scale=24,pk.function='pk1')
 
-Type2 <-define.Typei.cells(Ni=1000,birth_rate = 'B2[[1]]',death_rate  = 0.01,mutation_rate=10^-7,scale=24,pk.function='pk2')
+Type2 <-define.Typei.cells(Ni=1000,birth_rate = 'B2[[1]]',death_rate  = 0.01,mutation_rate=10^-7,
+                           scale=24,pk.function='pk2')
 ```
 
 ### Calculate the number of sensitive and resistant cells over time:
