@@ -4,7 +4,7 @@
 ```{r}
 install.packages("devtools")  
 library(devtools)  
-install_github("ItziarIA/ACESO") 
+install_github("Michorlab/ACESO") 
 ```
 ## mrgsolve package
 We recommend the installation of the development version of mrgsolve package from the metrumresearchgroup github repository:
