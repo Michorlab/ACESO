@@ -39,9 +39,9 @@ If returns TRUE, you are good to go with ACESO.
 # Vignettes
 In order to learn how to use ACESO, 4 different vignettes has been created. To check their names:
 ```{r}
-vignettes(package="ACESO")
+vignette(package="ACESO")
 ```
 To select one of them:
 ```{r}
-vignettes(package="ACESO","Two_type_branching_process")
+vignette(package="ACESO","Two_type_branching_process")
 ```
