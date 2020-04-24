@@ -3,8 +3,8 @@
 ## To install ACESO:
 ```{r}
 install.packages("devtools")  
-library(devtools)  
-install_github("Michorlab/ACESO") 
+library(devtools)
+install_github("Michorlab/ACESO", build_vignettes = TRUE) 
 ```
 ## mrgsolve package
 We recommend the installation of the development version of mrgsolve package from the metrumresearchgroup github repository:
