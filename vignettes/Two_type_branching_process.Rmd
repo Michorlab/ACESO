@@ -119,11 +119,9 @@ ggplot(cell_death[cell_death$Time!=0,])+
 ### Calculate net growth rate from cell proliferation data:
 In order to calculate the net growth of each cell type, we perform a linear regression on log-transformed viable cells over time as we assume an exponentially growing population of cells. In this exercise, we decided not to use the data corresponding to time = 0 to calculate those rates.
 
-(NOTE: Why not use data at time = 0? Also, I had to multiple cell count by 10 to get the Net_growth given. Did I do something wrong?) :
 ```{r}
 growth_data<-net_growth_rate(growth_data,time0_data = F)
 head(growth_data) #See the values in Net_growth column
-
 ```
 ### Calculate death rate:
 Use the data from cell apoptosis assays and the data where the net growth rate parameters have been calculated  to compute the death rate parameter. Call **calculate_death_rate** for this purpose. You must also specify the column name where the apoptotic cell count or the apoptotic cell fraction is stored, and finally specify if this column stores a fraction or the total counts by setting the argument 'Apoptotic.fraction' to TRUE or FALSE.
